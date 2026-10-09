@@ -27,6 +27,13 @@ export class GitHubError extends Error {
  * @property {string} stderr
  */
 
+function exitCodeOf(error) {
+  if (!error) {
+    return 0;
+  }
+  return typeof error.code === 'number' ? error.code : 1;
+}
+
 /**
  * Runs `gh` with the given argv, without a shell.
  *
@@ -41,8 +48,7 @@ export function defaultRunner(args, opts = {}) {
         resolve({ code: 127, stdout: '', stderr: 'gh: command not found' });
         return;
       }
-      const code = error ? (typeof error.code === 'number' ? error.code : 1) : 0;
-      resolve({ code, stdout: String(stdout), stderr: String(stderr) });
+      resolve({ code: exitCodeOf(error), stdout: String(stdout), stderr: String(stderr) });
     });
     if (opts.input !== undefined) {
       child.stdin.on('error', () => {});
@@ -122,9 +128,21 @@ function appendContexts(data, page) {
 }
 
 /**
+ * @typedef {object} GitHubClient
+ * @property {() => Promise<{ nameWithOwner: string, owner: string, name: string, defaultBranch: string | null, viewerPermission: string }>} preflight
+ * @property {() => Promise<number[]>} listBotPrNumbers
+ * @property {(repo: { owner: string, name: string }, number: number) => Promise<import('../core/snapshot.mjs').Snapshot>} fetchSnapshot
+ * @property {(repo: { owner: string, name: string }, number: number) => Promise<{ id: number, login: string | null, body: string }[]>} listIssueComments
+ * @property {(repo: { owner: string, name: string }, number: number, body: string) => Promise<{ id: number, url: string }>} createComment
+ * @property {(repo: { owner: string, name: string }, commentId: number, body: string) => Promise<{ id: number, url: string }>} updateComment
+ * @property {() => Promise<string>} viewerLogin
+ */
+
+/**
  * Creates the GitHub client.
  *
  * @param {{ run: (args: string[], opts?: { input?: string }) => Promise<RunResult> }} deps
+ * @returns {GitHubClient}
  */
 export function createGitHub({ run }) {
   async function graphql(query, variables) {
@@ -169,8 +187,9 @@ export function createGitHub({ run }) {
       }
       const view = await run(['repo', 'view', '--json', 'nameWithOwner,isArchived,defaultBranchRef,viewerPermission']);
       if (view.code !== 0) {
-        const detail = view.stderr.trim();
-        throw new GitHubError('repo', `could not resolve the repository${detail ? ` (${detail})` : ''}; run from a clone of the target repo or use \`gh repo set-default\``);
+        const stderr = view.stderr.trim();
+        const detail = stderr ? ` (${stderr})` : '';
+        throw new GitHubError('repo', `could not resolve the repository${detail}; run from a clone of the target repo or use \`gh repo set-default\``);
       }
       const info = parseJson(view.stdout, 'gh repo view');
       if (info.isArchived === true) {

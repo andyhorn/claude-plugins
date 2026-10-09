@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 import { readFileSync } from 'node:fs';
 
-import { evaluateGuard } from './lib/core/guard.mjs';
-
-const ANALYST_AGENT = 'deps:update-analyst';
+import { ANALYST_AGENT, evaluateGuard } from './lib/core/guard.mjs';
 
 function deny(reason) {
   process.stderr.write(`${reason}\n`);

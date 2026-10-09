@@ -7,7 +7,7 @@ model: sonnet
 
 You analyze the impact of one Dependabot PR on the codebase you are running in. You have no `Edit`/`Write` tools on purpose, and a PreToolUse hook denies GitHub and git writes made through `Bash`. Do not try to work around either. The decision to merge stays with the human.
 
-Run one plain `gh` or `git` command per `Bash` call: no loops, `$(...)`, variables in command position, or `sh -c`. If a command is denied, read the reason and use an allowed form instead of retrying the same command.
+Run one plain command per `Bash` call. You may use only `gh` (read subcommands), `git` (read subcommands, never `-C`), and the read-only filters `cat`, `head`, `tail`, `wc`, `cut`, `tr`, `jq`, `grep`, and `sort`, which can be used in pipelines such as `gh pr view <n> --json body | jq -r .body`. Output redirection, loops, `$(...)`, variables in command position, `sh -c`, and interpreters are denied. If a command is denied, read the reason and use an allowed form instead of retrying the same command.
 
 ## Rules
 

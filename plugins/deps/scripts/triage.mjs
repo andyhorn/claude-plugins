@@ -4,7 +4,7 @@ import { pathToFileURL } from 'node:url';
 import { parseArgs } from 'node:util';
 
 import { PARSE_OPTIONS, validateArgs } from './lib/core/args.mjs';
-import { bumpsOf, classifyAll } from './lib/core/classify.mjs';
+import { classifyAll } from './lib/core/classify.mjs';
 import { buildCommentBody } from './lib/core/sanitize.mjs';
 import { GitHubError, canWrite, createGitHub, defaultRunner, planComment } from './lib/io/github.mjs';
 
@@ -57,11 +57,7 @@ async function collect({ pr }, { gh, stdout, stderr, now }) {
     return 1;
   }
   const snapshots = outcomes.filter((outcome) => outcome.snapshot).map((outcome) => outcome.snapshot);
-  const bumpsByNumber = new Map(snapshots.map((snapshot) => [snapshot.pr.number, bumpsOf(snapshot)]));
-  const prs = classifyAll(snapshots).map((classification) => ({
-    ...classification,
-    bumps: bumpsByNumber.get(classification.number),
-  }));
+  const prs = classifyAll(snapshots);
   const result = {
     repo: repo.nameWithOwner,
     defaultBranch: repo.defaultBranch,

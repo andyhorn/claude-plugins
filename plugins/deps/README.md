@@ -23,22 +23,22 @@ The plugin never merges, approves, arms auto-merge, or changes settings. Its onl
 | Bucket | Rule |
 | --- | --- |
 | `attention` | The PR isn't from Dependabot, its commits fail the provenance check, it's a draft, or it targets a non-default branch. |
-| `waiting` | The head commit moved during collection, CI is still running, or mergeability is still being computed. Run the triage again later. |
-| `blocked` | CI is failing or absent, or the PR can't merge cleanly. PRs with failing CI are also analyzed. |
-| `needs-analysis` | The bump is effectively major, or the update metadata is missing. The analyst reads the release notes. |
-| `routine` | Every fact passes and every bump is a patch or minor update. |
+| `waiting` | The head commit moved during collection, CI is still running or only partly fetched, or mergeability is still being computed or the branch is behind its base. Run the triage again later. |
+| `blocked` | CI is failing, absent, or entirely skipped, or the PR has merge conflicts. Only PRs with failing CI are also analyzed. |
+| `needs-analysis` | At least one bump is effectively major or unknown, or the update metadata is missing. The analyst reads the release notes. |
+| `routine` | Provenance checks out, every bump is effectively a patch or minor update, CI is green, and the PR is mergeable. |
 
-`routine` means low review effort, not safe. You still read the diff before you merge.
+`routine` means low review effort, not safe. You still read the diff before you merge. Within each bucket, PRs with security signals are listed first; they stay in their bucket and are not moved out of `routine`.
 
 ## Facts
 
 | Fact | What it checks |
 | --- | --- |
 | Provenance | The commit is signed by GitHub (`web-flow`), authored with Dependabot's numeric noreply email, and the PR isn't from a fork. |
-| Bumps | Versions come from the `updated-dependencies` metadata in the commit, with a 0.x adjustment so `0.2.0` to `0.3.0` counts as a major bump. |
+| Bumps | Versions come from the `updated-dependencies` metadata in Dependabot's first commit, with a 0.x adjustment so `0.2.0` to `0.3.0` counts as a major bump. |
 | CI | The status check rollup for the head commit, across every page of checks. |
-| Mergeability | GitHub's `mergeable` and `mergeStateStatus` values. |
-| Security | A `security` label, or a "Vulnerabilities fixed" section in the PR body. |
+| Mergeability | GitHub's `mergeable` and `mergeStateStatus` values. A merge state of `BLOCKED` (such as required reviews) is informational and doesn't change the bucket. |
+| Security | A `security` label, or a "Vulnerabilities fixed" section in the PR body. It affects ordering within a bucket, not the bucket. |
 
 ## Recommended Dependabot setup
 
@@ -70,7 +70,8 @@ If you automate merging yourself:
 ## Limitations
 
 - Renovate PRs are listed but not parsed. They land in `attention` with the reason "not a Dependabot PR".
-- The write guard is pattern-based. It narrows the risk without eliminating it, because other commands, such as interpreters, aren't inspected.
+- The analyst can run only `gh` and `git` with read subcommands (no `git -C`), plus the read-only filters `cat`, `head`, `tail`, `wc`, `cut`, `tr`, `jq`, `grep`, and `sort` in pipelines. Output redirection, loops, `sh -c`, and interpreters are denied.
+- The guard is still pattern-based. It narrows the risk rather than eliminating it.
 - npm lifecycle scripts aren't inspected.
 - Security detection relies on a `security` label or a "Vulnerabilities fixed" section.
 

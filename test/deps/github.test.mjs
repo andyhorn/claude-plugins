@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
-import { canWrite, createGitHub } from '../../plugins/deps/scripts/lib/io/github.mjs';
+import { GitHubError, canWrite, createGitHub, defaultRunner } from '../../plugins/deps/scripts/lib/io/github.mjs';
 import { loadRaw } from './helpers.mjs';
 
 function scriptedRunner(responses) {
@@ -107,5 +110,78 @@ describe('canWrite', () => {
     assert.equal(canWrite('READ'), false);
     assert.equal(canWrite('TRIAGE'), false);
     assert.equal(canWrite(undefined), false);
+  });
+});
+
+const repo = { owner: 'acme', name: 'widgets' };
+const failed = { code: 1, stdout: '', stderr: 'boom' };
+
+describe('defaultRunner', () => {
+  it('returns code 127 when gh is not on PATH', async () => {
+    const emptyDir = await mkdtemp(join(tmpdir(), 'no-gh-'));
+    const originalPath = process.env.PATH;
+    process.env.PATH = emptyDir;
+    try {
+      const result = await defaultRunner(['auth', 'status']);
+      assert.equal(result.code, 127);
+      assert.equal(result.stdout, '');
+      assert.match(result.stderr, /not found/);
+    } finally {
+      process.env.PATH = originalPath;
+      await rm(emptyDir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('listIssueComments', () => {
+  it('parses one JSON object per line and ignores blank lines', async () => {
+    const lines = [
+      JSON.stringify({ id: 1, login: 'a', body: 'one' }),
+      JSON.stringify({ id: 2, login: null, body: 'two' }),
+    ];
+    const { run } = scriptedRunner([ok(`${lines.join('\n')}\n\n`)]);
+    assert.deepEqual(await createGitHub({ run }).listIssueComments(repo, 5), [
+      { id: 1, login: 'a', body: 'one' },
+      { id: 2, login: null, body: 'two' },
+    ]);
+  });
+
+  it('returns an empty list for empty output', async () => {
+    const { run } = scriptedRunner([ok('')]);
+    assert.deepEqual(await createGitHub({ run }).listIssueComments(repo, 5), []);
+  });
+
+  it('throws a gh error on a non-zero exit', async () => {
+    const { run } = scriptedRunner([failed]);
+    await assert.rejects(createGitHub({ run }).listIssueComments(repo, 5), (error) => {
+      assert.ok(error instanceof GitHubError);
+      assert.equal(error.kind, 'gh');
+      assert.match(error.message, /boom/);
+      return true;
+    });
+  });
+});
+
+describe('viewerLogin', () => {
+  it('returns the trimmed login', async () => {
+    const { run } = scriptedRunner([ok('octocat\n')]);
+    assert.equal(await createGitHub({ run }).viewerLogin(), 'octocat');
+  });
+
+  it('throws a gh error on a non-zero exit', async () => {
+    const { run } = scriptedRunner([failed]);
+    await assert.rejects(createGitHub({ run }).viewerLogin(), (error) => error instanceof GitHubError && error.kind === 'gh');
+  });
+});
+
+describe('graphql errors', () => {
+  it('throws a gh error when errors arrive without data', async () => {
+    const { run } = scriptedRunner([ok({ errors: [{ message: 'bad field' }, { message: 'rate limited' }] })]);
+    await assert.rejects(createGitHub({ run }).fetchSnapshot(repo, 1), (error) => {
+      assert.ok(error instanceof GitHubError);
+      assert.equal(error.kind, 'gh');
+      assert.match(error.message, /bad field; rate limited/);
+      return true;
+    });
   });
 });
