@@ -40,3 +40,21 @@ describe('guard-analyst', () => {
     assert.equal(runGuard('not json').status, 0);
   });
 });
+
+describe('runGuard', () => {
+  const throwing = () => {
+    throw new Error('boom');
+  };
+
+  it('denies an analyst payload when the guard throws', async () => {
+    const { runGuard: evaluateHook } = await import(SCRIPT);
+    const result = evaluateHook(hookInput('deps:update-analyst', 'gh pr view 1'), throwing);
+    assert.equal(result.code, 2);
+    assert.match(result.message, /could not be evaluated/);
+  });
+
+  it('allows a main-thread payload when the guard throws', async () => {
+    const { runGuard: evaluateHook } = await import(SCRIPT);
+    assert.deepEqual(evaluateHook(hookInput(null, 'gh pr view 1'), throwing), { code: 0 });
+  });
+});
