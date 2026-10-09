@@ -10,13 +10,14 @@ export const PARSE_OPTIONS = Object.freeze({
 
 const COMMANDS = ['collect', 'comment'];
 const POSITIVE_INTEGER = /^[1-9]\d*$/;
+const MAX_PR_NUMBER = 2147483647;
 
 function parsePrNumber(text) {
   if (typeof text !== 'string' || !POSITIVE_INTEGER.test(text)) {
     return null;
   }
   const number = Number(text);
-  return Number.isSafeInteger(number) ? number : null;
+  return Number.isSafeInteger(number) && number <= MAX_PR_NUMBER ? number : null;
 }
 
 function validateCollect(values, extra) {

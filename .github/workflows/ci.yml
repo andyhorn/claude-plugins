@@ -36,5 +36,6 @@ jobs:
           node-version: 'lts/*'
       - run: npm install -g @anthropic-ai/claude-code@2.1.295
       - run: claude plugin validate --strict .
+      - run: claude plugin validate --strict ./plugins/deps
       - run: claude plugin validate --strict ./plugins/git
       - run: claude plugin validate --strict ./plugins/workflow
