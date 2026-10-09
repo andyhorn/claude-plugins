@@ -1,0 +1,11 @@
+{
+  "name": "git",
+  "version": "0.1.0",
+  "description": "Git workflows: rebase onto the default or stacked parent branch, driving mechanics on a cheap model and escalating conflict resolution to a strong one.",
+  "author": {
+    "name": "Andy Horn",
+    "email": "andyjhorn@gmail.com"
+  },
+  "repository": "https://github.com/andyhorn/claude-plugins",
+  "license": "MIT"
+}

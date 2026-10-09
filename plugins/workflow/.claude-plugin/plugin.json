@@ -1,0 +1,11 @@
+{
+  "name": "workflow",
+  "version": "0.1.0",
+  "description": "Working-session workflows: walk through review findings or open questions one decision at a time with docket.",
+  "author": {
+    "name": "Andy Horn",
+    "email": "andyjhorn@gmail.com"
+  },
+  "repository": "https://github.com/andyhorn/claude-plugins",
+  "license": "MIT"
+}

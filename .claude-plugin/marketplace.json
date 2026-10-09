@@ -1,0 +1,29 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "andyhorn",
+  "owner": {
+    "name": "Andy Horn",
+    "email": "andyjhorn@gmail.com"
+  },
+  "metadata": {
+    "description": "Andy Horn's Claude Code skills, agents, and hooks."
+  },
+  "plugins": [
+    {
+      "name": "git",
+      "description": "Git workflows: rebase onto the default or stacked parent branch, driving mechanics on a cheap model and escalating conflict resolution to a strong one.",
+      "version": "0.1.0",
+      "source": "./plugins/git",
+      "category": "development",
+      "tags": ["git", "rebase"]
+    },
+    {
+      "name": "workflow",
+      "description": "Working-session workflows: walk through review findings or open questions one decision at a time with docket.",
+      "version": "0.1.0",
+      "source": "./plugins/workflow",
+      "category": "productivity",
+      "tags": ["review", "decisions"]
+    }
+  ]
+}
