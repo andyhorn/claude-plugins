@@ -1,8 +1,7 @@
 /**
  * The pinned GraphQL query that produced the raw fixtures under test/deps/fixtures/raw.
  * Variables: `owner` (String!), `name` (String!), `number` (Int!).
- * The captures predate the `pageInfo` selection on `contexts`, which was added so a truncated
- * check list can be detected and paged.
+ * `contexts` selects `pageInfo` so a truncated check list can be detected.
  * The response `data` object is the input to {@link toSnapshot}.
  */
 export const SNAPSHOT_QUERY = `query($owner: String!, $name: String!, $number: Int!) {
@@ -93,7 +92,7 @@ export const SNAPSHOT_QUERY = `query($owner: String!, $name: String!, $number: I
 
 /**
  * @typedef {object} Snapshot
- * @property {string} viewer
+ * @property {string | null} viewer
  * @property {SnapshotRepo} repo
  * @property {SnapshotPr} pr
  * @property {{ totalCount: number, items: SnapshotCommit[] }} commits

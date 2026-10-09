@@ -94,8 +94,10 @@ describe('classify result shape', () => {
       'suggestedAction',
       'analyze',
       'security',
+      'bumps',
       'facts',
     ]);
+    assert.deepEqual(result.bumps, bumpsOf(routine()));
     assert.deepEqual(result.facts.map((fact) => fact.fact), [
       'author', 'provenance', 'draft', 'base', 'head', 'bumps', 'ci', 'mergeability', 'security',
     ]);

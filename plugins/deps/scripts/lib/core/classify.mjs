@@ -33,6 +33,7 @@ import {
  * @property {string} suggestedAction
  * @property {boolean} analyze Whether an impact analysis should be dispatched.
  * @property {boolean} security
+ * @property {Bump[]} bumps The dependency updates declared by the PR's first commit.
  * @property {Fact[]} facts
  */
 
@@ -50,6 +51,8 @@ const MERGE_STATE_NOTES = {
   UNSTABLE: 'UNSTABLE: mergeable, but some commit statuses are not passing',
   HAS_HOOKS: 'HAS_HOOKS: mergeable, with pre-receive hooks',
 };
+
+const RUNNING_CHECK_STATES = new Set(['PENDING', 'EXPECTED']);
 
 const SECURITY_SECTION = /<summary>\s*Vulnerabilities\s+fixed\s*<\/summary>/i;
 
@@ -198,10 +201,14 @@ export function headFact(snapshot) {
  * @returns {Bump[]} Sorted by name.
  */
 export function bumpsOf(snapshot) {
+  return readBumps(snapshot).bumps;
+}
+
+function readBumps(snapshot) {
   const message = snapshot.commits.items[0]?.message ?? '';
   const parsed = parseUpdatedDependencies(message);
   if (!parsed.ok) {
-    return [];
+    return { ok: false, reason: parsed.reason, bumps: [] };
   }
   const fromMessage = parseFromVersions(message);
   const fromBody = parseFromVersions(snapshot.pr.body);
@@ -216,7 +223,7 @@ export function bumpsOf(snapshot) {
     group: update.group,
   });
   const byNameThenVersion = (a, b) => compareStrings(a.name, b.name) || compareStrings(a.to, b.to);
-  return parsed.updates.map(toBump).sort(byNameThenVersion);
+  return { ok: true, reason: null, bumps: parsed.updates.map(toBump).sort(byNameThenVersion) };
 }
 
 function describeBump(bump) {
@@ -237,18 +244,17 @@ function describeBump(bump) {
  * @returns {Fact}
  */
 export function bumpsFact(snapshot) {
-  const message = snapshot.commits.items[0]?.message ?? '';
-  const parsed = parseUpdatedDependencies(message);
-  if (!parsed.ok) {
-    return makeFact('bumps', 'info', `no updated-dependencies metadata (${parsed.reason})`);
+  return factFromBumps(readBumps(snapshot));
+}
+
+function factFromBumps({ ok, reason, bumps }) {
+  if (!ok) {
+    return makeFact('bumps', 'info', `no updated-dependencies metadata (${reason})`);
   }
-  const bumps = bumpsOf(snapshot);
   const evidence = bumps.map(describeBump).join('; ');
   const routine = bumps.every((bump) => bump.effective === 'patch' || bump.effective === 'minor');
   return makeFact('bumps', routine ? 'ok' : 'info', evidence);
 }
-
-const RUNNING_CHECK_STATES = new Set(['PENDING', 'EXPECTED']);
 
 function normalizeCheck(check) {
   if (check.kind === 'StatusContext') {
@@ -361,14 +367,14 @@ export function securityFact(snapshot) {
   return makeFact('security', 'none', 'no security label or vulnerabilities section');
 }
 
-function collectFacts(snapshot) {
+function collectFacts(snapshot, bumpsRead) {
   return [
     authorFact(snapshot),
     provenanceFact(snapshot),
     draftFact(snapshot),
     baseFact(snapshot),
     headFact(snapshot),
-    bumpsFact(snapshot),
+    factFromBumps(bumpsRead),
     ciFact(snapshot),
     mergeabilityFact(snapshot),
     securityFact(snapshot),
@@ -456,7 +462,8 @@ function decide(snapshot, facts) {
  * @returns {Classification}
  */
 export function classify(snapshot) {
-  const facts = collectFacts(snapshot);
+  const bumpsRead = readBumps(snapshot);
+  const facts = collectFacts(snapshot, bumpsRead);
   const decision = decide(snapshot, facts);
   const { pr } = snapshot;
   return {
@@ -466,6 +473,7 @@ export function classify(snapshot) {
     sha: pr.headRefOid,
     ...decision,
     security: factNamed(facts, 'security').status === 'info',
+    bumps: bumpsRead.bumps,
     facts,
   };
 }

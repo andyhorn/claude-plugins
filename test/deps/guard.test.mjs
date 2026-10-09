@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { evaluateGuard } from '../../plugins/deps/scripts/lib/core/guard.mjs';
+import { ANALYST_AGENT, evaluateGuard } from '../../plugins/deps/scripts/lib/core/guard.mjs';
 
 function analyst(command) {
   return evaluateGuard({
-    agent_type: 'deps:update-analyst',
+    agent_type: ANALYST_AGENT,
     tool_name: 'Bash',
     tool_input: { command },
   });
@@ -19,7 +19,7 @@ function assertAllowed(command) {
 function assertDenied(command) {
   const result = analyst(command);
   assert.equal(result.decision, 'deny', `expected deny: ${command}`);
-  assert.ok(result.reason.startsWith('deps:update-analyst is read-only'), result.reason);
+  assert.ok(result.reason.startsWith(`${ANALYST_AGENT} is read-only`), result.reason);
   return result;
 }
 
@@ -35,6 +35,9 @@ describe('documented analyst steps', () => {
     'gh pr checks 12',
     'gh api repos/o/r/releases',
     'gh api -X GET repos/o/r/contents/CHANGELOG.md -f ref=main',
+    'gh pr view 1 | head -50',
+    'gh pr diff 1 | grep -n foo',
+    "gh api repos/o/r/releases | jq '.[0].body'",
   ];
   for (const command of documented) {
     it(`allows ${command}`, () => assertAllowed(command));
@@ -52,23 +55,146 @@ describe('scope', () => {
   });
 
   it('allows non-Bash tools', () => {
-    const input = { agent_type: 'deps:update-analyst', tool_name: 'Read', tool_input: { file_path: '/x' } };
+    const input = { agent_type: ANALYST_AGENT, tool_name: 'Read', tool_input: { file_path: '/x' } };
     assert.deepEqual(evaluateGuard(input), { decision: 'allow' });
   });
 
   it('denies a Bash call whose command cannot be read', () => {
     assertDenied(undefined);
-    assert.equal(evaluateGuard({ agent_type: 'deps:update-analyst', tool_name: 'Bash' }).decision, 'deny');
+    assert.equal(evaluateGuard({ agent_type: ANALYST_AGENT, tool_name: 'Bash' }).decision, 'deny');
   });
 
   it('tolerates a missing hook input', () => {
     assert.deepEqual(evaluateGuard(undefined), { decision: 'allow' });
   });
 
-  it('allows commands that do not involve gh or git', () => {
-    for (const command of ['ls -la', 'cat package.json', 'node --version', "grep -rn 'foo' src/", 'echo hello | wc -l']) {
+  it('guards the bare agent name too', () => {
+    const input = { agent_type: 'update-analyst', tool_name: 'Bash', tool_input: { command: 'gh pr merge 1' } };
+    assert.equal(evaluateGuard(input).decision, 'deny');
+  });
+
+  it('denies and allows from a payload captured live from the harness', () => {
+    const captured = {
+      session_id: 'a2f4c1de-5b0e-4f7a-9d3c-0e1b2a3c4d5e',
+      transcript_path: '/Users/andrew/.claude/projects/x/a2f4c1de.jsonl',
+      cwd: '/Users/andrew/Development/claude-plugins',
+      permission_mode: 'default',
+      hook_event_name: 'PreToolUse',
+      agent_type: 'deps:update-analyst',
+      agent_id: 'a4c7f7ead8feb5de0',
+      tool_name: 'Bash',
+      tool_input: { command: 'echo DENYME' },
+    };
+    assert.equal(evaluateGuard(captured).decision, 'deny');
+    const mainThread = { ...captured, agent_type: null, agent_id: null };
+    assert.deepEqual(evaluateGuard(mainThread), { decision: 'allow' });
+  });
+});
+
+describe('text filters', () => {
+  it('allows read-only text filters', () => {
+    for (const command of [
+      'cat package.json',
+      "grep -rn 'foo' src/",
+      'head -n 5 README.md',
+      'tail -n 5 README.md',
+      'wc -l README.md',
+      'cut -d, -f1 data.csv',
+      'tr a-z A-Z',
+      "jq '.name' package.json",
+      'sort -u names.txt',
+      'sort -t, -k2 names.txt',
+    ]) {
       assertAllowed(command);
     }
+  });
+
+  it('denies every other command', () => {
+    for (const command of [
+      'python3 -c "print(1)"',
+      'node x.mjs comment 12 --body hi',
+      'curl -X POST https://api.github.com/x',
+      'sh -c "echo hi"',
+      'bash',
+      'env FOO=1 python3',
+      'uniq a b',
+      'ls -la',
+      'echo hello',
+      'node --version',
+      './cat file',
+      '/bin/cat file',
+    ]) {
+      assertDenied(command);
+    }
+  });
+
+  it('denies sort output options in every spelling', () => {
+    for (const command of ['sort -o out', 'sort -oout in', 'sort -uo out', 'sort --output out', 'sort --output=out in', 'sort --outp=out in']) {
+      assertDenied(command);
+    }
+  });
+
+  it('denies gh and git hidden behind a filter', () => {
+    assertDenied('grep -r foo . | cat gh');
+    assertDenied('cat git status');
+  });
+
+  it('states what the filters allow', () => {
+    const { reason } = assertDenied('python3 x.py');
+    assert.match(reason, /python3 is not an allowed command/);
+    assert.match(reason, /text filters cat, head, tail, wc, cut, tr, jq, grep, and sort/);
+  });
+});
+
+describe('output redirection', () => {
+  it('allows /dev/null and file descriptor duplication', () => {
+    for (const command of [
+      'gh pr view 1 >/dev/null',
+      'gh pr view 1 > /dev/null',
+      'gh pr view 1 2>/dev/null',
+      'gh pr view 1 2> /dev/null',
+      'gh pr view 1 >> /dev/null',
+      'gh pr view 1 &>/dev/null',
+      'gh pr view 1 2>&1',
+      'gh pr view 1 >&2',
+      'gh pr view 1 >/dev/null 2>&1',
+      '>/dev/null gh pr view 1',
+      'cat < package.json',
+      'sort < names.txt',
+    ]) {
+      assertAllowed(command);
+    }
+  });
+
+  it('denies output redirection to files in every form', () => {
+    for (const command of [
+      'gh pr view 1 > out.txt',
+      'gh pr view 1 >out.txt',
+      'gh pr view 1 >> out.txt',
+      'gh pr view 1 >>out.txt',
+      'gh pr view 1 >| out.txt',
+      'gh pr view 1 &>out.txt',
+      'gh pr view 1 &> out.txt',
+      'gh pr view 1 2>err.txt',
+      'gh pr view 1 1> out.txt',
+      'gh pr view 1 >&out.txt',
+      'gh pr view 1 > .git/hooks/pre-commit',
+      'gh pr view 1 > $FILE',
+      'gh pr view 1 >',
+      'cat package.json >out.txt',
+      'cat package.json >/dev/null.bak',
+      'cat <>out.txt',
+    ]) {
+      assertDenied(command);
+    }
+  });
+
+  it('ignores quoted and escaped angle brackets', () => {
+    assertAllowed("git grep -n -F -e '=>' origin/main");
+    assertAllowed('git grep -n -F -e "a > b" origin/main');
+    assertAllowed('git grep -n -F -e \\> origin/main');
+    assertAllowed("cat '>'");
+    assertDenied("cat '>'&gh pr merge 1");
   });
 });
 
@@ -211,10 +337,8 @@ describe('git allowlist', () => {
       'git remote --verbose',
       'git remote get-url origin',
       'git remote show origin',
-      'git -C /tmp/repo status',
       'git --no-pager log -n 1',
       'git -P log -n 1',
-      'git --git-dir=/tmp/x/.git --work-tree=/tmp/x status',
       "git grep -n -F -e 'foo(' origin/main -- src",
       'git grep --line-number -i foo origin/main',
       "git grep -e 'OAuth' origin/main",
@@ -256,6 +380,12 @@ describe('git allowlist', () => {
       'git --exec-path=/tmp/x status',
       'git --paginate log',
       'git -C',
+      'git -C /tmp/repo status',
+      'git -C/tmp/repo status',
+      'git --git-dir=/tmp/x/.git status',
+      'git --git-dir /tmp/x/.git status',
+      'git --work-tree=/tmp/x status',
+      'git --work-tree /tmp/x status',
     ]) {
       assertDenied(command);
     }
@@ -340,12 +470,12 @@ describe('shell structure', () => {
   });
 
   it('allows a substitution that runs an allowed command', () => {
-    assertAllowed('echo "$(gh pr view 1 --json title)"');
-    assertAllowed('echo `git status`');
+    assertAllowed('cat "$(gh pr view 1 --json title)"');
+    assertAllowed('cat `git status`');
   });
 
   it('treats single quotes as literal', () => {
-    assertAllowed("echo '$(x pr merge 1)' > /dev/null");
+    assertAllowed("cat '$(x pr merge 1)' > /dev/null");
     assertAllowed("gh pr view 1 --jq '.title; $(x)'");
     assertAllowed("git grep -F -e 'a;b|c&d' origin/main");
   });
