@@ -38,7 +38,7 @@ The plugin never merges, approves, arms auto-merge, or changes settings. Its onl
 | Bumps | Versions come from the `updated-dependencies` metadata in Dependabot's first commit, with a 0.x adjustment so `0.2.0` to `0.3.0` counts as a major bump. |
 | CI | The status check rollup for the head commit, across every page of checks. |
 | Mergeability | GitHub's `mergeable` and `mergeStateStatus` values. A merge state of `BLOCKED` (such as required reviews) is informational and doesn't change the bucket. |
-| Security | A `security` label, or a "Vulnerabilities fixed" section in the PR body. It affects ordering within a bucket, not the bucket. |
+| Security | An open Dependabot alert whose patched version is at or below the bump's new version, or a `security` label. Dependabot adds no label or body marker by default. It affects ordering within a bucket, not the bucket. |
 
 ## Recommended Dependabot setup
 
@@ -73,10 +73,12 @@ If you automate merging yourself:
 - The analyst can run only `gh` and `git` with read subcommands (no `git -C`), plus the read-only filters `cat`, `head`, `tail`, `wc`, `cut`, `tr`, `jq`, `grep`, and `sort` in pipelines. Output redirection, loops, `sh -c`, and interpreters are denied.
 - The guard is still pattern-based. It narrows the risk rather than eliminating it.
 - npm lifecycle scripts aren't inspected.
-- Security detection relies on a `security` label or a "Vulnerabilities fixed" section.
+- Alert matching needs Dependabot alerts enabled and a token that can read them. Otherwise the report says alerts were unavailable and only the `security` label is used.
+- The analyst treats fetched text as data. If PR bodies, release notes, or CI logs contain instructions aimed at an AI or reviewer, it doesn't follow them and reports them as suspicious content.
 
 ## Requirements
 
 - Node 22 or newer.
 - An authenticated `gh` CLI.
+- For security matching: Dependabot alerts enabled on the repo and a token that can read them.
 - A clone of the target repo as your working directory.

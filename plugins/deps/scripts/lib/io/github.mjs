@@ -104,6 +104,32 @@ function parseJsonLines(text, what) {
     .map((line) => parseJson(line, what));
 }
 
+const ALERT_FIELDS = [
+  'ghsa: .security_advisory.ghsa_id',
+  'severity: .security_advisory.severity',
+  'summary: .security_advisory.summary',
+  'ecosystem: .security_vulnerability.package.ecosystem',
+  'package: .security_vulnerability.package.name',
+  'patched: .security_vulnerability.first_patched_version.identifier',
+].join(', ');
+
+function alertFailureReason(result) {
+  const firstLine = result.stderr.split('\n').map((line) => line.trim()).find((line) => line !== '');
+  const reason = (firstLine ?? '').replace(/^gh: /, '');
+  return reason || `gh exited with code ${result.code}`;
+}
+
+function toAlert(entry) {
+  return {
+    ghsa: entry.ghsa,
+    severity: entry.severity,
+    summary: entry.summary,
+    ecosystem: entry.ecosystem,
+    package: entry.package,
+    patched: entry.patched ?? null,
+  };
+}
+
 function slug(repo) {
   return `${repo.owner}/${repo.name}`;
 }
@@ -132,6 +158,7 @@ function appendContexts(data, page) {
  * @property {() => Promise<{ nameWithOwner: string, owner: string, name: string, defaultBranch: string | null, viewerPermission: string }>} preflight
  * @property {() => Promise<number[]>} listBotPrNumbers
  * @property {(repo: { owner: string, name: string }, number: number) => Promise<import('../core/snapshot.mjs').Snapshot>} fetchSnapshot
+ * @property {(repo: { owner: string, name: string }) => Promise<import('../core/classify.mjs').AlertContext>} listOpenAlerts
  * @property {(repo: { owner: string, name: string }, number: number) => Promise<{ id: number, login: string | null, body: string }[]>} listIssueComments
  * @property {(repo: { owner: string, name: string }, number: number, body: string) => Promise<{ id: number, url: string }>} createComment
  * @property {(repo: { owner: string, name: string }, commentId: number, body: string) => Promise<{ id: number, url: string }>} updateComment
@@ -241,6 +268,26 @@ export function createGitHub({ run }) {
         cursor = nextContextsCursor(data);
       }
       return toSnapshot(data);
+    },
+
+    /**
+     * Lists the repository's open Dependabot alerts. Never throws: when the alerts cannot be read
+     * (disabled, or a token without access), the result says so and carries the reason.
+     *
+     * @param {{ owner: string, name: string }} repo
+     * @returns {Promise<import('../core/classify.mjs').AlertContext>}
+     */
+    async listOpenAlerts(repo) {
+      const path = `repos/${slug(repo)}/dependabot/alerts?state=open&per_page=100`;
+      try {
+        const result = await run(['api', '--paginate', path, '--jq', `.[] | {${ALERT_FIELDS}}`]);
+        if (result.code !== 0) {
+          return { available: false, reason: alertFailureReason(result) };
+        }
+        return { available: true, items: parseJsonLines(result.stdout, 'listing Dependabot alerts').map(toAlert) };
+      } catch (error) {
+        return { available: false, reason: error instanceof Error ? error.message : String(error) };
+      }
     },
 
     /**

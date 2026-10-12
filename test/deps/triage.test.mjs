@@ -30,6 +30,9 @@ function fakeGh(overrides = {}) {
     async listBotPrNumbers() {
       return [...snapshots.keys()].sort((a, b) => a - b);
     },
+    async listOpenAlerts() {
+      return { available: true, items: [] };
+    },
     async fetchSnapshot(_repo, number) {
       calls.push(['fetchSnapshot', number]);
       if (!snapshots.has(number)) {
@@ -92,7 +95,7 @@ describe('main collect', () => {
     const result = await run(['collect'], { gh });
     assert.equal(result.code, 0);
     const output = JSON.parse(result.stdout);
-    const expected = classifyAll([...snapshots.values()]);
+    const expected = classifyAll([...snapshots.values()], { alerts: { available: true, items: [] } });
     assert.equal(output.repo, 'acme/widgets');
     assert.equal(output.defaultBranch, 'main');
     assert.equal(output.collectedAt, '2026-10-09T12:00:00.000Z');
@@ -102,6 +105,53 @@ describe('main collect', () => {
       assert.deepEqual(pr.bumps, bumpsOf(snapshots.get(pr.number)));
     }
     assert.equal(output.errors, undefined);
+    assert.deepEqual(output.alerts, { available: true, count: 0 });
+  });
+
+  it('passes alerts to classification and summarizes them without the raw items', async () => {
+    const original = toSnapshot(loadRaw('supabase-storage-1495.json'));
+    const other = structuredClone(original);
+    other.pr.number = 1000;
+    other.pr.url = 'https://github.com/supabase/storage/pull/1000';
+    other.commits.items[0].message = other.commits.items[0].message.replaceAll('fast-json-stringify', 'other-package');
+    const alert = {
+      ghsa: 'GHSA-aaaa-bbbb-cccc',
+      severity: 'high',
+      summary: 'A flaw',
+      ecosystem: 'npm',
+      package: 'fast-json-stringify',
+      patched: '7.0.0',
+    };
+    const { gh } = fakeGh({
+      async listBotPrNumbers() {
+        return [1000, 1495];
+      },
+      async listOpenAlerts() {
+        return { available: true, items: [alert] };
+      },
+      async fetchSnapshot(_repo, number) {
+        return number === 1000 ? other : original;
+      },
+    });
+    const result = await run(['collect'], { gh });
+    assert.equal(result.code, 0);
+    const output = JSON.parse(result.stdout);
+    assert.deepEqual(output.prs.map((pr) => [pr.number, pr.security]), [[1495, true], [1000, false]]);
+    assert.deepEqual(output.alerts, { available: true, count: 1 });
+    assert.ok(!result.stdout.includes('A flaw'));
+  });
+
+  it('still collects when alerts are unavailable', async () => {
+    const { gh, snapshots } = fakeGh({
+      async listOpenAlerts() {
+        return { available: false, reason: 'Dependabot alerts are disabled for this repository. (HTTP 403)' };
+      },
+    });
+    const result = await run(['collect'], { gh });
+    assert.equal(result.code, 0);
+    const output = JSON.parse(result.stdout);
+    assert.deepEqual(output.alerts, { available: false, reason: 'Dependabot alerts are disabled for this repository. (HTTP 403)' });
+    assert.equal(output.count, snapshots.size);
   });
 
   it('records a failed PR fetch in errors without aborting', async () => {

@@ -75,6 +75,64 @@ describe('listBotPrNumbers', () => {
   });
 });
 
+describe('listOpenAlerts', () => {
+  const repo = { owner: 'acme', name: 'widgets' };
+  const line = (extra) => JSON.stringify({
+    ghsa: 'GHSA-aaaa-bbbb-cccc',
+    severity: 'high',
+    summary: 'A flaw',
+    ecosystem: 'npm',
+    package: 'left-pad',
+    patched: '1.2.3',
+    ...extra,
+  });
+
+  it('parses JSON lines and maps a missing patched version to null', async () => {
+    const stdout = `${line()}\n${line({ ghsa: 'GHSA-dddd-eeee-ffff', patched: null })}\n`;
+    const { calls, run } = scriptedRunner([ok(stdout)]);
+    const context = await createGitHub({ run }).listOpenAlerts(repo);
+    assert.equal(context.available, true);
+    assert.deepEqual(context.items.map((item) => [item.ghsa, item.patched]), [
+      ['GHSA-aaaa-bbbb-cccc', '1.2.3'],
+      ['GHSA-dddd-eeee-ffff', null],
+    ]);
+    assert.deepEqual(calls[0].args.slice(0, 3), ['api', '--paginate', 'repos/acme/widgets/dependabot/alerts?state=open&per_page=100']);
+  });
+
+  it('returns an empty list when there are no alerts', async () => {
+    const { run } = scriptedRunner([ok('')]);
+    assert.deepEqual(await createGitHub({ run }).listOpenAlerts(repo), { available: true, items: [] });
+  });
+
+  it('reports the stripped first stderr line when alerts are disabled', async () => {
+    const stderr = '\ngh: Dependabot alerts are disabled for this repository. (HTTP 403)\nmore\n';
+    const { run } = scriptedRunner([{ code: 1, stdout: '', stderr }]);
+    assert.deepEqual(await createGitHub({ run }).listOpenAlerts(repo), {
+      available: false,
+      reason: 'Dependabot alerts are disabled for this repository. (HTTP 403)',
+    });
+  });
+
+  it('reports a scope error as unavailable', async () => {
+    const stderr = 'This API operation needs the "admin:repo_hook" scope. (HTTP 403)';
+    const { run } = scriptedRunner([{ code: 1, stdout: '', stderr }]);
+    const context = await createGitHub({ run }).listOpenAlerts(repo);
+    assert.equal(context.available, false);
+    assert.match(context.reason, /admin:repo_hook/);
+  });
+
+  it('never throws on unparseable output or a runner failure', async () => {
+    const garbled = await createGitHub({ run: scriptedRunner([ok('not json')]).run }).listOpenAlerts(repo);
+    assert.equal(garbled.available, false);
+    const rejecting = await createGitHub({
+      run: async () => {
+        throw new Error('spawn failed');
+      },
+    }).listOpenAlerts(repo);
+    assert.deepEqual(rejecting, { available: false, reason: 'spawn failed' });
+  });
+});
+
 describe('fetchSnapshot', () => {
   it('merges check context pages', async () => {
     const first = structuredClone(loadRaw('supabase-storage-1495.json'));

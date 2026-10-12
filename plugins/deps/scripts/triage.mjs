@@ -49,6 +49,7 @@ async function fetchOutcome(gh, repo, number) {
 
 async function collect({ pr }, { gh, stdout, stderr, now }) {
   const repo = await gh.preflight();
+  const alerts = await gh.listOpenAlerts(repo);
   const numbers = pr === null ? await gh.listBotPrNumbers() : [pr];
   const outcomes = await mapWithConcurrency(numbers, FETCH_CONCURRENCY, (number) => fetchOutcome(gh, repo, number));
   const failed = outcomes.filter((outcome) => outcome.error !== undefined);
@@ -57,12 +58,13 @@ async function collect({ pr }, { gh, stdout, stderr, now }) {
     return 1;
   }
   const snapshots = outcomes.filter((outcome) => outcome.snapshot).map((outcome) => outcome.snapshot);
-  const prs = classifyAll(snapshots);
+  const prs = classifyAll(snapshots, { alerts });
   const result = {
     repo: repo.nameWithOwner,
     defaultBranch: repo.defaultBranch,
     viewer: snapshots[0]?.viewer ?? null,
     collectedAt: now().toISOString(),
+    alerts: alerts.available ? { available: true, count: alerts.items.length } : { available: false, reason: alerts.reason },
     count: prs.length,
     prs,
   };
