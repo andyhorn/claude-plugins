@@ -178,3 +178,58 @@ export function effectiveLevel(updateType, version) {
   }
   return adjustsToMajor(updateType, version) ? 'major' : updateType;
 }
+
+const VERSION = /^v?(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:-([^+]+))?(?:\+.*)?$/;
+
+function parseVersion(value) {
+  const match = VERSION.exec(String(value ?? '').trim());
+  if (!match) {
+    return null;
+  }
+  const numbers = [match[1], match[2] ?? '0', match[3] ?? '0'].map(Number);
+  return { numbers, prerelease: match[4] ?? null };
+}
+
+function sign(difference) {
+  if (difference === 0) {
+    return 0;
+  }
+  return difference < 0 ? -1 : 1;
+}
+
+function comparePrerelease(a, b) {
+  if (a === b) {
+    return 0;
+  }
+  if (a === null) {
+    return 1;
+  }
+  if (b === null) {
+    return -1;
+  }
+  return a < b ? -1 : 1;
+}
+
+/**
+ * Compares two versions of the form `[v]MAJOR[.MINOR[.PATCH]][-prerelease][+build]`, zero-filling
+ * missing parts and ignoring build metadata. A prerelease sorts below its release, and prerelease
+ * strings compare lexically.
+ *
+ * @param {string} a
+ * @param {string} b
+ * @returns {-1 | 0 | 1 | null} `null` when either version is not in that form.
+ */
+export function compareVersions(a, b) {
+  const left = parseVersion(a);
+  const right = parseVersion(b);
+  if (!left || !right) {
+    return null;
+  }
+  for (let index = 0; index < 3; index += 1) {
+    const difference = left.numbers[index] - right.numbers[index];
+    if (difference !== 0) {
+      return sign(difference);
+    }
+  }
+  return comparePrerelease(left.prerelease, right.prerelease);
+}

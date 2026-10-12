@@ -43,6 +43,10 @@ const REQUIRED_SCENARIOS = [
   'bumps-sha-pinned-no-update-type',
   'bumps-grouped-mixed',
   'renovate',
+  'security-alert-fixed',
+  'security-alert-not-fixed',
+  'security-alerts-unavailable',
+  'security-label',
 ];
 
 const fixture = loadFixture('scenarios.json');
@@ -100,7 +104,7 @@ describe('scenarios.json', () => {
 
   for (const [id, scenario] of Object.entries(fixture.scenarios)) {
     it(`classifies ${id}`, () => {
-      const result = classify(snapshotFor(scenario));
+      const result = classify(snapshotFor(scenario), { alerts: scenario.alerts });
       assert.deepEqual(
         { bucket: result.bucket, facts: result.facts },
         { bucket: scenario.expected.bucket, facts: expectedFacts(scenario) },
@@ -116,7 +120,7 @@ describe('scenarios.json', () => {
       }
       const listed = Object.keys(scenario.expected.facts);
       const unlisted = FACT_ORDER.filter((name) => !listed.includes(name));
-      const result = classify(snapshotFor(scenario));
+      const result = classify(snapshotFor(scenario), { alerts: scenario.alerts });
       for (const name of unlisted) {
         const fact = result.facts.find((candidate) => candidate.fact === name);
         assert.deepEqual(fact, baseByName.get(name), `${id}: ${name}`);
@@ -162,6 +166,20 @@ describe('classifyAll ordering', () => {
     assert.deepEqual(ordered, [[20, true], [40, true], [10, false], [30, false]]);
   });
 
+  it('ranks a PR that fixes an alert ahead of unflagged PRs in its bucket', () => {
+    const alerts = {
+      available: true,
+      items: [
+        { ghsa: 'GHSA-aaaa-aaaa-aaaa', severity: 'high', summary: 's', ecosystem: 'npm', package: 'fast-json-stringify', patched: '6.3.1' },
+      ],
+    };
+    const unrelated = routineSnapshot(5, {
+      'commits.items.0.message': fixture.base.set['commits.items.0.message'].replaceAll('fast-json-stringify', 'other-package'),
+    });
+    const flagged = classifyAll([unrelated, routineSnapshot(30)], { alerts }).map((result) => [result.number, result.security]);
+    assert.deepEqual(flagged, [[30, true], [5, false]]);
+  });
+
   it('keeps a security PR in its own bucket rather than promoting it', () => {
     const snapshots = [numbered('draft', 1), routineSnapshot(2, { 'pr.labels': ['security'] })];
     const buckets = classifyAll(snapshots).map((result) => result.bucket);
@@ -193,6 +211,21 @@ describe('determinism', () => {
     for (const snapshot of snapshots) {
       assert.deepEqual(classify(snapshot), classify(structuredClone(snapshot)));
     }
+  });
+
+  it('is deterministic with an alert context', () => {
+    const alerts = {
+      available: true,
+      items: [
+        { ghsa: 'GHSA-b', severity: 'low', summary: 's', ecosystem: 'npm', package: 'fast-json-stringify', patched: '6.3.1' },
+        { ghsa: 'GHSA-a', severity: 'high', summary: 's', ecosystem: 'npm', package: 'fast-json-stringify', patched: '6.0.0' },
+      ],
+    };
+    const reversedAlerts = { available: true, items: [...alerts.items].reverse() };
+    const expected = classifyAll(snapshots, { alerts });
+    assert.deepEqual(classifyAll([...snapshots].reverse(), { alerts }), expected);
+    assert.deepEqual(classifyAll(snapshots, { alerts: reversedAlerts }), expected);
+    assert.deepEqual(classifyAll(structuredClone(snapshots), { alerts: structuredClone(alerts) }), expected);
   });
 
   it('does not mutate its input', () => {

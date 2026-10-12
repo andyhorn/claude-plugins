@@ -1,4 +1,5 @@
 import {
+  compareVersions,
   effectiveLevel,
   parseFromVersions,
   parseUpdatedDependencies,
@@ -37,6 +38,25 @@ import {
  * @property {Fact[]} facts
  */
 
+/**
+ * @typedef {object} DependabotAlert
+ * @property {string} ghsa
+ * @property {string} severity
+ * @property {string} summary
+ * @property {string} ecosystem
+ * @property {string} package
+ * @property {string | null} patched The first patched version, or null when none exists.
+ */
+
+/**
+ * @typedef {{ available: true, items: DependabotAlert[] } | { available: false, reason: string }} AlertContext
+ */
+
+/**
+ * @typedef {object} ClassifyContext
+ * @property {AlertContext} [alerts] The repository's open Dependabot alerts, when they were fetched.
+ */
+
 /** Bucket names in precedence order. */
 export const BUCKETS = Object.freeze(['attention', 'waiting', 'blocked', 'needs-analysis', 'routine']);
 
@@ -53,8 +73,6 @@ const MERGE_STATE_NOTES = {
 };
 
 const RUNNING_CHECK_STATES = new Set(['PENDING', 'EXPECTED']);
-
-const SECURITY_SECTION = /<summary>\s*Vulnerabilities\s+fixed\s*<\/summary>/i;
 
 function short(sha) {
   return sha ? String(sha).slice(0, 7) : 'none';
@@ -346,28 +364,53 @@ export function mergeabilityFact(snapshot) {
   return makeFact('mergeability', 'info', raw);
 }
 
+function alertMatches(alerts, bumps) {
+  if (!alerts?.available) {
+    return [];
+  }
+  const reaches = (bump, alert) => {
+    const order = compareVersions(bump.to, alert.patched);
+    return order === 0 || order === 1;
+  };
+  const isFixed = (alert) => alert.patched !== null && bumps.some((bump) => bump.name === alert.package && reaches(bump, alert));
+  return alerts.items.filter(isFixed).sort((x, y) => compareStrings(x.ghsa, y.ghsa));
+}
+
+function describeMatch(alert) {
+  return `fixes ${alert.ghsa} (${alert.severity}) in ${alert.package}, patched in ${alert.patched}`;
+}
+
+function noSecuritySignal(alerts) {
+  if (alerts === undefined) {
+    return 'no security label; Dependabot alerts not checked';
+  }
+  if (!alerts.available) {
+    return `no security label; Dependabot alerts unavailable (${alerts.reason})`;
+  }
+  return 'no open Dependabot alert fixed by this bump; no security label';
+}
+
 /**
- * Flags PRs labelled `security` or whose body has Dependabot's vulnerabilities section.
- * Plain mentions of "vulnerabilities" are ignored: every Dependabot body links a page with that word.
+ * Reports whether the PR fixes an open Dependabot alert (a bump to or past the alert's patched
+ * version of the same package) or is labelled `security`.
  *
  * @param {import('./snapshot.mjs').Snapshot} snapshot
+ * @param {AlertContext} [alerts]
+ * @param {Bump[]} [bumps] The PR's bumps; read from the snapshot when omitted.
  * @returns {Fact}
  */
-export function securityFact(snapshot) {
-  const signals = [];
+export function securityFact(snapshot, alerts, bumps = bumpsOf(snapshot)) {
+  const signals = alertMatches(alerts, bumps).map(describeMatch);
   if (snapshot.pr.labels.some((label) => label.toLowerCase() === 'security')) {
     signals.push('labelled security');
-  }
-  if (SECURITY_SECTION.test(snapshot.pr.body)) {
-    signals.push('PR body has a "Vulnerabilities fixed" section');
   }
   if (signals.length > 0) {
     return makeFact('security', 'info', signals.join('; '));
   }
-  return makeFact('security', 'none', 'no security label or vulnerabilities section');
+  return makeFact('security', 'none', noSecuritySignal(alerts));
 }
 
-function collectFacts(snapshot, bumpsRead) {
+function collectFacts(snapshot, bumpsRead, alerts) {
   return [
     authorFact(snapshot),
     provenanceFact(snapshot),
@@ -377,7 +420,7 @@ function collectFacts(snapshot, bumpsRead) {
     factFromBumps(bumpsRead),
     ciFact(snapshot),
     mergeabilityFact(snapshot),
-    securityFact(snapshot),
+    securityFact(snapshot, alerts, bumpsRead.bumps),
   ];
 }
 
@@ -459,11 +502,12 @@ function decide(snapshot, facts) {
  * Sorts a PR into a review bucket from its facts.
  *
  * @param {import('./snapshot.mjs').Snapshot} snapshot
+ * @param {ClassifyContext} [context]
  * @returns {Classification}
  */
-export function classify(snapshot) {
+export function classify(snapshot, context = {}) {
   const bumpsRead = readBumps(snapshot);
-  const facts = collectFacts(snapshot, bumpsRead);
+  const facts = collectFacts(snapshot, bumpsRead, context.alerts);
   const decision = decide(snapshot, facts);
   const { pr } = snapshot;
   return {
@@ -494,8 +538,9 @@ function compareClassifications(a, b) {
  * The result does not depend on the input order.
  *
  * @param {import('./snapshot.mjs').Snapshot[]} snapshots
+ * @param {ClassifyContext} [context]
  * @returns {Classification[]}
  */
-export function classifyAll(snapshots) {
-  return snapshots.map(classify).sort(compareClassifications);
+export function classifyAll(snapshots, context = {}) {
+  return snapshots.map((snapshot) => classify(snapshot, context)).sort(compareClassifications);
 }

@@ -456,10 +456,71 @@ describe('mergeabilityFact', () => {
 });
 
 describe('securityFact', () => {
-  it('ignores plain body mentions and matches the section case-insensitively', () => {
+  const alert = (overrides = {}) => ({
+    ghsa: 'GHSA-35jh-r3h4-6jhm',
+    severity: 'high',
+    summary: 'Command injection',
+    ecosystem: 'npm',
+    package: 'lodash',
+    patched: '4.17.21',
+    ...overrides,
+  });
+  const lodash = (to) => routine({ 'commits.items.0.message': updatedDependencies(['lodash', to, 'patch']) });
+  const available = (...items) => ({ available: true, items });
+
+  it('is not triggered by the Vulnerabilities fixed section or plain mentions', () => {
+    assert.equal(securityFact(routine({ 'pr.body': '<summary>Vulnerabilities fixed</summary>' })).status, 'none');
     assert.equal(securityFact(routine({ 'pr.body': 'managing-security-vulnerabilities' })).status, 'none');
-    assert.equal(securityFact(routine({ 'pr.body': '<SUMMARY>vulnerabilities fixed</SUMMARY>' })).status, 'info');
+  });
+
+  it('matches the label case-insensitively and exactly', () => {
     assert.equal(securityFact(routine({ 'pr.labels': ['SECURITY'] })).status, 'info');
     assert.equal(securityFact(routine({ 'pr.labels': ['security-review'] })).status, 'none');
+  });
+
+  it('reports an alert fixed by the bump, then the label', () => {
+    const fact = securityFact(lodash('4.17.21'), available(alert()));
+    assert.deepEqual(fact, {
+      fact: 'security',
+      status: 'info',
+      evidence: 'fixes GHSA-35jh-r3h4-6jhm (high) in lodash, patched in 4.17.21',
+    });
+    const snapshot = applySet(lodash('4.17.21'), { 'pr.labels': ['security'] });
+    assert.equal(
+      securityFact(snapshot, available(alert())).evidence,
+      'fixes GHSA-35jh-r3h4-6jhm (high) in lodash, patched in 4.17.21; labelled security',
+    );
+  });
+
+  it('sorts matches by ghsa', () => {
+    const fact = securityFact(lodash('4.17.21'), available(alert({ ghsa: 'GHSA-z' }), alert({ ghsa: 'GHSA-a' })));
+    assert.match(fact.evidence, /^fixes GHSA-a .*; fixes GHSA-z /);
+  });
+
+  it('does not match a bump below the patched version, another package, or no patch', () => {
+    const none = 'no open Dependabot alert fixed by this bump; no security label';
+    assert.equal(securityFact(lodash('4.17.20'), available(alert())).evidence, none);
+    assert.equal(securityFact(lodash('4.17.21'), available(alert({ package: 'express' }))).evidence, none);
+    assert.equal(securityFact(lodash('4.17.21'), available(alert({ patched: null }))).evidence, none);
+    assert.equal(securityFact(lodash('4.17.21'), available(alert({ patched: 'unparseable' }))).status, 'none');
+  });
+
+  it('matches a bump above the patched version', () => {
+    assert.equal(securityFact(lodash('4.18.0'), available(alert())).status, 'info');
+  });
+
+  it('words the evidence by alert context', () => {
+    assert.equal(
+      securityFact(routine(), { available: false, reason: 'HTTP 403' }).evidence,
+      'no security label; Dependabot alerts unavailable (HTTP 403)',
+    );
+    assert.equal(securityFact(routine()).evidence, 'no security label; Dependabot alerts not checked');
+  });
+
+  it('sets the classification flag from an alert match without changing the bucket', () => {
+    const result = classify(lodash('4.17.21'), { alerts: available(alert()) });
+    assert.equal(result.security, true);
+    assert.equal(result.bucket, 'routine');
+    assert.equal(classify(lodash('4.17.21')).security, false);
   });
 });

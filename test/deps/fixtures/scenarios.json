@@ -17,7 +17,7 @@
         { "fact": "bumps", "status": "ok", "evidence": "fast-json-stringify 6.3.0→6.3.1 (direct:production, patch → patch)" },
         { "fact": "ci", "status": "ok", "evidence": "31 passed, 3 skipped/neutral" },
         { "fact": "mergeability", "status": "ok", "evidence": "CLEAN: mergeable with no blocking requirements" },
-        { "fact": "security", "status": "none", "evidence": "no security label or vulnerabilities section" }
+        { "fact": "security", "status": "none", "evidence": "no security label; Dependabot alerts not checked" }
       ]
     }
   },
@@ -455,7 +455,7 @@
           },
           "ci": { "status": "ok", "evidence": "1 passed" },
           "mergeability": { "status": "ok", "evidence": "CLEAN: mergeable with no blocking requirements" },
-          "security": { "status": "none", "evidence": "no security label or vulnerabilities section" }
+          "security": { "status": "none", "evidence": "no security label; Dependabot alerts not checked" }
         }
       }
     },
@@ -466,33 +466,59 @@
         "facts": { "security": { "status": "info", "evidence": "labelled security" } }
       }
     },
-    "security-body-section": {
+    "security-alert-fixed": {
+      "alerts": {
+        "available": true,
+        "items": [
+          { "ghsa": "GHSA-bbbb-bbbb-bbbb", "severity": "low", "summary": "other", "ecosystem": "npm", "package": "fast-json-stringify", "patched": "6.3.1" },
+          { "ghsa": "GHSA-aaaa-aaaa-aaaa", "severity": "high", "summary": "bad", "ecosystem": "npm", "package": "fast-json-stringify", "patched": "6.2.0" },
+          { "ghsa": "GHSA-cccc-cccc-cccc", "severity": "high", "summary": "elsewhere", "ecosystem": "npm", "package": "lodash", "patched": "4.17.21" }
+        ]
+      },
+      "expected": {
+        "bucket": "routine",
+        "facts": {
+          "security": {
+            "status": "info",
+            "evidence": "fixes GHSA-aaaa-aaaa-aaaa (high) in fast-json-stringify, patched in 6.2.0; fixes GHSA-bbbb-bbbb-bbbb (low) in fast-json-stringify, patched in 6.3.1"
+          }
+        }
+      }
+    },
+    "security-alert-not-fixed": {
+      "alerts": {
+        "available": true,
+        "items": [
+          { "ghsa": "GHSA-aaaa-aaaa-aaaa", "severity": "high", "summary": "bad", "ecosystem": "npm", "package": "fast-json-stringify", "patched": "6.4.0" },
+          { "ghsa": "GHSA-bbbb-bbbb-bbbb", "severity": "high", "summary": "unpatched", "ecosystem": "npm", "package": "fast-json-stringify", "patched": null }
+        ]
+      },
+      "expected": {
+        "bucket": "routine",
+        "facts": {
+          "security": { "status": "none", "evidence": "no open Dependabot alert fixed by this bump; no security label" }
+        }
+      }
+    },
+    "security-alerts-unavailable": {
+      "alerts": { "available": false, "reason": "token lacks security_events scope" },
+      "expected": {
+        "bucket": "routine",
+        "facts": {
+          "security": {
+            "status": "none",
+            "evidence": "no security label; Dependabot alerts unavailable (token lacks security_events scope)"
+          }
+        }
+      }
+    },
+    "security-body-section-ignored": {
       "set": {
         "pr.body": "Bumps [fast-json-stringify](https://github.com/fastify/fast-json-stringify) from 6.3.0 to 6.3.1.\n<details>\n<summary>Vulnerabilities fixed</summary>\n<p>Sourced from the advisory database.</p>\n</details>\n"
       },
       "expected": {
         "bucket": "routine",
-        "facts": {
-          "security": {
-            "status": "info",
-            "evidence": "PR body has a \"Vulnerabilities fixed\" section"
-          }
-        }
-      }
-    },
-    "security-label-and-body-section": {
-      "set": {
-        "pr.labels": ["security"],
-        "pr.body": "Bumps [fast-json-stringify](https://github.com/fastify/fast-json-stringify) from 6.3.0 to 6.3.1.\n<summary>  vulnerabilities FIXED </summary>\n"
-      },
-      "expected": {
-        "bucket": "routine",
-        "facts": {
-          "security": {
-            "status": "info",
-            "evidence": "labelled security; PR body has a \"Vulnerabilities fixed\" section"
-          }
-        }
+        "facts": {}
       }
     },
     "security-plain-mention-ignored": {
@@ -581,7 +607,7 @@
             "status": "info",
             "evidence": "BLOCKED: branch protection requirements (such as required reviews) not yet met"
           },
-          "security": { "status": "none", "evidence": "no security label or vulnerabilities section" }
+          "security": { "status": "none", "evidence": "no security label; Dependabot alerts not checked" }
         }
       }
     }

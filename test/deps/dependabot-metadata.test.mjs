@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import {
+  compareVersions,
   effectiveLevel,
   parseFromVersions,
   parseUpdatedDependencies,
@@ -230,5 +231,34 @@ describe('effectiveLevel', () => {
   it('does not adjust versions from 1.0.0 upward', () => {
     assert.equal(effectiveLevel('minor', '1.0.0'), 'minor');
     assert.equal(effectiveLevel('patch', '10.0.0'), 'patch');
+  });
+});
+
+describe('compareVersions', () => {
+  it('orders versions numerically', () => {
+    assert.equal(compareVersions('1.2.3', '1.2.3'), 0);
+    assert.equal(compareVersions('1.2.4', '1.2.3'), 1);
+    assert.equal(compareVersions('1.2.3', '1.10.0'), -1);
+    assert.equal(compareVersions('v2.0.0', '1.99.99'), 1);
+  });
+
+  it('zero-fills short versions and ignores build metadata', () => {
+    assert.equal(compareVersions('1.2', '1.2.0'), 0);
+    assert.equal(compareVersions('2', '1.9.9'), 1);
+    assert.equal(compareVersions('1.0.0+build.5', '1.0.0'), 0);
+  });
+
+  it('sorts a prerelease below its release and compares prereleases lexically', () => {
+    assert.equal(compareVersions('1.0.0-beta.1', '1.0.0'), -1);
+    assert.equal(compareVersions('1.0.0', '1.0.0-rc.1'), 1);
+    assert.equal(compareVersions('1.0.0-alpha', '1.0.0-beta'), -1);
+    assert.equal(compareVersions('1.0.0-beta', '1.0.0-beta'), 0);
+  });
+
+  it('returns null for anything else', () => {
+    assert.equal(compareVersions('2fb7b81cf159a2d62ac7ef91960446450db6ed72', '1.0.0'), null);
+    assert.equal(compareVersions('1.0.0', 'latest'), null);
+    assert.equal(compareVersions('1.2.3.4', '1.2.3'), null);
+    assert.equal(compareVersions(undefined, '1.0.0'), null);
   });
 });
