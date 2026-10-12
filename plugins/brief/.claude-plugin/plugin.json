@@ -1,0 +1,19 @@
+{
+  "name": "brief",
+  "version": "0.1.0",
+  "description": "Publishes per-worktree status entries to a private live claude.ai Artifact dashboard.",
+  "author": {
+    "name": "Andy Horn",
+    "email": "andyjhorn@gmail.com"
+  },
+  "repository": "https://github.com/andyhorn/claude-plugins",
+  "license": "MIT",
+  "userConfig": {
+    "nudge": {
+      "type": "boolean",
+      "title": "Nudge to publish",
+      "description": "Ask Claude once at turn end to publish or skip when a worktree has unpublished substantive changes.",
+      "default": true
+    }
+  }
+}
