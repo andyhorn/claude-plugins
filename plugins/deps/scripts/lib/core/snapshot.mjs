@@ -43,6 +43,28 @@ export const SNAPSHOT_QUERY = `query($owner: String!, $name: String!, $number: I
 `;
 
 /**
+ * The query that fetches the next page of head-commit check contexts.
+ * Variables: `owner` (String!), `name` (String!), `number` (Int!), `cursor` (String!).
+ */
+export const CONTEXTS_PAGE_QUERY = `query($owner: String!, $name: String!, $number: Int!, $cursor: String!) {
+  repository(owner: $owner, name: $name) {
+    pullRequest(number: $number) {
+      headCommit: commits(last: 1) { nodes { commit {
+        statusCheckRollup { contexts(first: 100, after: $cursor) {
+          pageInfo { hasNextPage endCursor }
+          nodes {
+            __typename
+            ... on CheckRun { name status conclusion }
+            ... on StatusContext { context state }
+          }
+        } }
+      } } }
+    }
+  }
+}
+`;
+
+/**
  * @typedef {object} SnapshotRepo
  * @property {string} nameWithOwner
  * @property {string | null} defaultBranch

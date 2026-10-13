@@ -81,6 +81,14 @@ describe('validateArgs comment', () => {
   });
 });
 
+describe('validateArgs PR number bound', () => {
+  it('accepts the largest GraphQL Int and rejects one more', () => {
+    assert.deepEqual(validate(['collect', '2147483647']), { ok: true, command: 'collect', pr: 2147483647 });
+    assert.equal(validate(['collect', '2147483648']).ok, false);
+    assert.equal(validate(['comment', '--pr', '2147483648', '--body-file', 'b.md']).ok, false);
+  });
+});
+
 describe('validateArgs command', () => {
   it('rejects an unknown command and lists the valid ones', () => {
     const result = validate(['merge']);

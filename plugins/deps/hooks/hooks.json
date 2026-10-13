@@ -1,0 +1,17 @@
+{
+  "description": "deps plugin: keeps the deps:update-analyst agent read-only",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/guard-analyst.mjs\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
