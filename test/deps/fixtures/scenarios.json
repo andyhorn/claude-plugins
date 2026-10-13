@@ -1,0 +1,615 @@
+{
+  "base": {
+    "raw": "supabase-storage-1495.json",
+    "set": {
+      "pr.mergeStateStatus": "CLEAN",
+      "pr.body": "Bumps [fast-json-stringify](https://github.com/fastify/fast-json-stringify) from 6.3.0 to 6.3.1.\n\n[![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=fast-json-stringify&package-manager=npm_and_yarn&previous-version=6.3.0&new-version=6.3.1)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\n",
+      "commits.items.0.message": "chore(deps): bump fast-json-stringify from 6.3.0 to 6.3.1\n\nBumps [fast-json-stringify](https://github.com/fastify/fast-json-stringify) from 6.3.0 to 6.3.1.\n- [Release notes](https://github.com/fastify/fast-json-stringify/releases)\n- [Commits](https://github.com/fastify/fast-json-stringify/compare/v6.3.0...v6.3.1)\n\n---\nupdated-dependencies:\n- dependency-name: fast-json-stringify\n  dependency-version: 6.3.1\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>"
+    },
+    "expected": {
+      "bucket": "routine",
+      "facts": [
+        { "fact": "author", "status": "ok", "evidence": "author Bot dependabot" },
+        { "fact": "provenance", "status": "ok", "evidence": "1 commit authored by dependabot[bot] and signed by GitHub (web-flow); same-repository branch" },
+        { "fact": "draft", "status": "ok", "evidence": "ready for review" },
+        { "fact": "base", "status": "ok", "evidence": "targets default branch master" },
+        { "fact": "head", "status": "ok", "evidence": "head 5f9c17b" },
+        { "fact": "bumps", "status": "ok", "evidence": "fast-json-stringify 6.3.0→6.3.1 (direct:production, patch → patch)" },
+        { "fact": "ci", "status": "ok", "evidence": "31 passed, 3 skipped/neutral" },
+        { "fact": "mergeability", "status": "ok", "evidence": "CLEAN: mergeable with no blocking requirements" },
+        { "fact": "security", "status": "none", "evidence": "no security label; Dependabot alerts not checked" }
+      ]
+    }
+  },
+  "scenarios": {
+    "provenance-unverified": {
+      "set": { "commits.items.0.signature.valid": false },
+      "expected": {
+        "bucket": "attention",
+        "facts": { "provenance": { "status": "fail", "evidence": "5f9c17b: unsigned" } }
+      }
+    },
+    "provenance-not-signed-by-github": {
+      "set": { "commits.items.0.signature.signedByGitHub": false },
+      "expected": {
+        "bucket": "attention",
+        "facts": { "provenance": { "status": "fail", "evidence": "5f9c17b: not signed by GitHub" } }
+      }
+    },
+    "provenance-non-web-flow-signer": {
+      "set": { "commits.items.0.signature.signer": "some-contributor" },
+      "expected": {
+        "bucket": "attention",
+        "facts": { "provenance": { "status": "fail", "evidence": "5f9c17b: signer some-contributor" } }
+      }
+    },
+    "provenance-spoofed-author": {
+      "set": {
+        "commits.items.0.author.name": "dependabot[bot]",
+        "commits.items.0.author.email": "attacker@example.com",
+        "commits.items.0.author.login": "attacker"
+      },
+      "expected": {
+        "bucket": "attention",
+        "facts": {
+          "provenance": {
+            "status": "fail",
+            "evidence": "5f9c17b: author email attacker@example.com, author login attacker"
+          }
+        }
+      }
+    },
+    "provenance-cross-repo": {
+      "set": { "pr.isCrossRepository": true },
+      "expected": {
+        "bucket": "attention",
+        "facts": { "provenance": { "status": "fail", "evidence": "cross-repository" } }
+      }
+    },
+    "provenance-partial-commits": {
+      "set": { "commits.totalCount": 3 },
+      "expected": {
+        "bucket": "attention",
+        "facts": { "provenance": { "status": "fail", "evidence": "only 1 of 3 commits fetched" } }
+      }
+    },
+    "provenance-human-update-branch": {
+      "set": {
+        "commits.totalCount": 2,
+        "commits.items.1": {
+          "oid": "aaaaaaa1111111111111111111111111111111aa",
+          "message": "Merge branch 'master' into dependabot/npm_and_yarn/fast-json-stringify-7.0.1",
+          "author": {
+            "name": "Some Human",
+            "email": "12345+human@users.noreply.github.com",
+            "login": "human"
+          },
+          "signature": { "valid": true, "signedByGitHub": true, "signer": "web-flow" }
+        },
+        "pr.headRefOid": "aaaaaaa1111111111111111111111111111111aa",
+        "checks.oid": "aaaaaaa1111111111111111111111111111111aa"
+      },
+      "expected": {
+        "bucket": "attention",
+        "facts": {
+          "provenance": {
+            "status": "fail",
+            "evidence": "aaaaaaa: author email 12345+human@users.noreply.github.com, author login human"
+          },
+          "head": { "status": "ok", "evidence": "head aaaaaaa" }
+        }
+      }
+    },
+    "draft": {
+      "set": { "pr.isDraft": true },
+      "expected": {
+        "bucket": "attention",
+        "facts": { "draft": { "status": "fail", "evidence": "draft PR" } }
+      }
+    },
+    "non-default-base": {
+      "set": { "pr.baseRefName": "develop" },
+      "expected": {
+        "bucket": "attention",
+        "facts": { "base": { "status": "fail", "evidence": "targets develop, default branch is master" } }
+      }
+    },
+    "head-moved": {
+      "set": { "pr.headRefOid": "bbbbbbb2222222222222222222222222222222bb" },
+      "expected": {
+        "bucket": "waiting",
+        "facts": {
+          "head": {
+            "status": "pending",
+            "evidence": "head moved (PR head bbbbbbb, last commit 5f9c17b, checks 5f9c17b)"
+          }
+        }
+      }
+    },
+    "head-moved-checks-only": {
+      "set": { "checks.oid": "ccccccc3333333333333333333333333333333cc" },
+      "expected": {
+        "bucket": "waiting",
+        "facts": {
+          "head": {
+            "status": "pending",
+            "evidence": "head moved (PR head 5f9c17b, last commit 5f9c17b, checks ccccccc)"
+          }
+        }
+      }
+    },
+    "ci-green": {
+      "set": {
+        "checks.totalCount": 2,
+        "checks.items": [
+          { "kind": "CheckRun", "name": "build", "status": "COMPLETED", "conclusion": "SUCCESS" },
+          { "kind": "StatusContext", "name": "coverage", "status": null, "conclusion": "SUCCESS" }
+        ]
+      },
+      "expected": {
+        "bucket": "routine",
+        "facts": { "ci": { "status": "ok", "evidence": "2 passed" } }
+      }
+    },
+    "ci-running": {
+      "set": {
+        "checks.totalCount": 3,
+        "checks.items": [
+          { "kind": "CheckRun", "name": "build", "status": "COMPLETED", "conclusion": "SUCCESS" },
+          { "kind": "CheckRun", "name": "test", "status": "IN_PROGRESS", "conclusion": null },
+          { "kind": "CheckRun", "name": "lint", "status": "QUEUED", "conclusion": null }
+        ]
+      },
+      "expected": {
+        "bucket": "waiting",
+        "facts": { "ci": { "status": "pending", "evidence": "running: lint, test" } }
+      }
+    },
+    "ci-running-and-failing": {
+      "set": {
+        "checks.totalCount": 3,
+        "checks.items": [
+          { "kind": "CheckRun", "name": "build", "status": "COMPLETED", "conclusion": "TIMED_OUT" },
+          { "kind": "StatusContext", "name": "deploy", "status": null, "conclusion": "PENDING" },
+          { "kind": "CheckRun", "name": "test", "status": "WAITING", "conclusion": null }
+        ]
+      },
+      "expected": {
+        "bucket": "waiting",
+        "facts": {
+          "ci": { "status": "pending", "evidence": "running: deploy, test; failing: build (TIMED_OUT)" }
+        }
+      }
+    },
+    "ci-failing": {
+      "set": {
+        "checks.totalCount": 3,
+        "checks.items": [
+          { "kind": "CheckRun", "name": "build", "status": "COMPLETED", "conclusion": "SUCCESS" },
+          { "kind": "CheckRun", "name": "test", "status": "COMPLETED", "conclusion": "FAILURE" },
+          { "kind": "StatusContext", "name": "ci/other", "status": null, "conclusion": "ERROR" }
+        ]
+      },
+      "expected": {
+        "bucket": "blocked",
+        "facts": {
+          "ci": { "status": "fail", "evidence": "failing: ci/other (ERROR), test (FAILURE)" }
+        }
+      }
+    },
+    "ci-cancelled-counts-as-failing": {
+      "set": {
+        "checks.totalCount": 2,
+        "checks.items": [
+          { "kind": "CheckRun", "name": "build", "status": "COMPLETED", "conclusion": "SUCCESS" },
+          { "kind": "CheckRun", "name": "e2e", "status": "COMPLETED", "conclusion": "CANCELLED" }
+        ]
+      },
+      "expected": {
+        "bucket": "blocked",
+        "facts": { "ci": { "status": "fail", "evidence": "failing: e2e (CANCELLED)" } }
+      }
+    },
+    "ci-empty": {
+      "set": { "checks.totalCount": 0, "checks.items": [], "checks.rollupState": null },
+      "expected": {
+        "bucket": "blocked",
+        "facts": { "ci": { "status": "none", "evidence": "no checks reported" } }
+      }
+    },
+    "ci-all-skipped": {
+      "set": {
+        "checks.totalCount": 2,
+        "checks.items": [
+          { "kind": "CheckRun", "name": "Remote", "status": "COMPLETED", "conclusion": "SKIPPED" },
+          { "kind": "CheckRun", "name": "CodeQL", "status": "COMPLETED", "conclusion": "NEUTRAL" }
+        ]
+      },
+      "expected": {
+        "bucket": "blocked",
+        "facts": { "ci": { "status": "none", "evidence": "all 2 checks skipped or neutral" } }
+      }
+    },
+    "ci-incomplete": {
+      "set": { "checks.totalCount": 156 },
+      "expected": {
+        "bucket": "waiting",
+        "facts": { "ci": { "status": "pending", "evidence": "only 34 of 156 checks fetched" } }
+      }
+    },
+    "mergeability-conflicting": {
+      "set": { "pr.mergeable": "CONFLICTING", "pr.mergeStateStatus": "DIRTY" },
+      "expected": {
+        "bucket": "blocked",
+        "facts": {
+          "mergeability": {
+            "status": "fail",
+            "evidence": "merge conflicts (mergeable CONFLICTING, merge state DIRTY)"
+          }
+        }
+      }
+    },
+    "mergeability-unknown": {
+      "set": { "pr.mergeable": "UNKNOWN", "pr.mergeStateStatus": "UNKNOWN" },
+      "expected": {
+        "bucket": "waiting",
+        "facts": {
+          "mergeability": {
+            "status": "pending",
+            "evidence": "GitHub has not computed mergeability yet (mergeable UNKNOWN, merge state UNKNOWN)"
+          }
+        }
+      }
+    },
+    "mergeability-behind": {
+      "set": { "pr.mergeStateStatus": "BEHIND" },
+      "expected": {
+        "bucket": "waiting",
+        "facts": {
+          "mergeability": { "status": "pending", "evidence": "BEHIND: branch is behind the base branch" }
+        }
+      }
+    },
+    "mergeability-blocked": {
+      "set": { "pr.mergeStateStatus": "BLOCKED" },
+      "expected": {
+        "bucket": "routine",
+        "facts": {
+          "mergeability": {
+            "status": "info",
+            "evidence": "BLOCKED: branch protection requirements (such as required reviews) not yet met"
+          }
+        }
+      }
+    },
+    "mergeability-unstable": {
+      "set": { "pr.mergeStateStatus": "UNSTABLE" },
+      "expected": {
+        "bucket": "routine",
+        "facts": {
+          "mergeability": {
+            "status": "info",
+            "evidence": "UNSTABLE: mergeable, but some commit statuses are not passing"
+          }
+        }
+      }
+    },
+    "mergeability-unrecognized": {
+      "set": { "pr.mergeStateStatus": "SOMETHING_NEW" },
+      "expected": {
+        "bucket": "routine",
+        "facts": {
+          "mergeability": {
+            "status": "info",
+            "evidence": "mergeable MERGEABLE, merge state SOMETHING_NEW"
+          }
+        }
+      }
+    },
+    "bumps-patch": {
+      "set": {
+        "commits.items.0.message": "chore(deps): bump lodash from 4.17.21 to 4.17.22\n\nBumps [lodash](https://github.com/lodash/lodash) from 4.17.21 to 4.17.22.\n\n---\nupdated-dependencies:\n- dependency-name: lodash\n  dependency-version: 4.17.22\n  dependency-type: direct:development\n  update-type: version-update:semver-patch\n...\n"
+      },
+      "expected": {
+        "bucket": "routine",
+        "facts": {
+          "bumps": {
+            "status": "ok",
+            "evidence": "lodash 4.17.21→4.17.22 (direct:development, patch → patch)"
+          }
+        }
+      }
+    },
+    "bumps-minor": {
+      "set": {
+        "commits.items.0.message": "chore(deps): bump express from 4.18.2 to 4.19.0\n\nBumps [express](https://github.com/expressjs/express) from 4.18.2 to 4.19.0.\n\n---\nupdated-dependencies:\n- dependency-name: express\n  dependency-version: 4.19.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n"
+      },
+      "expected": {
+        "bucket": "routine",
+        "facts": {
+          "bumps": {
+            "status": "ok",
+            "evidence": "express 4.18.2→4.19.0 (direct:production, minor → minor)"
+          }
+        }
+      }
+    },
+    "bumps-major": {
+      "set": {
+        "commits.items.0.message": "chore(deps): bump chalk from 4.1.2 to 5.0.0\n\nBumps [chalk](https://github.com/chalk/chalk) from 4.1.2 to 5.0.0.\n\n---\nupdated-dependencies:\n- dependency-name: chalk\n  dependency-version: 5.0.0\n  dependency-type: direct:production\n  update-type: version-update:semver-major\n...\n"
+      },
+      "expected": {
+        "bucket": "needs-analysis",
+        "facts": {
+          "bumps": {
+            "status": "info",
+            "evidence": "chalk 4.1.2→5.0.0 (direct:production, major → major)"
+          }
+        }
+      }
+    },
+    "bumps-0x-minor-is-major": {
+      "set": {
+        "commits.items.0.message": "chore(deps): bump left-pad from 0.4.1 to 0.5.0\n\nBumps [left-pad](https://github.com/example/left-pad) from 0.4.1 to 0.5.0.\n\n---\nupdated-dependencies:\n- dependency-name: left-pad\n  dependency-version: 0.5.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n"
+      },
+      "expected": {
+        "bucket": "needs-analysis",
+        "facts": {
+          "bumps": {
+            "status": "info",
+            "evidence": "left-pad 0.4.1→0.5.0 (direct:production, minor → major)"
+          }
+        }
+      }
+    },
+    "bumps-0x-patch-stays-patch": {
+      "set": {
+        "commits.items.0.message": "chore(deps): bump left-pad from 0.4.1 to 0.4.2\n\nBumps [left-pad](https://github.com/example/left-pad) from 0.4.1 to 0.4.2.\n\n---\nupdated-dependencies:\n- dependency-name: left-pad\n  dependency-version: 0.4.2\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n"
+      },
+      "expected": {
+        "bucket": "routine",
+        "facts": {
+          "bumps": {
+            "status": "ok",
+            "evidence": "left-pad 0.4.1→0.4.2 (direct:production, patch → patch)"
+          }
+        }
+      }
+    },
+    "bumps-00x-patch-is-major": {
+      "set": {
+        "commits.items.0.message": "chore(deps): bump tiny from 0.0.3 to 0.0.4\n\nBumps [tiny](https://github.com/example/tiny) from 0.0.3 to 0.0.4.\n\n---\nupdated-dependencies:\n- dependency-name: tiny\n  dependency-version: 0.0.4\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n"
+      },
+      "expected": {
+        "bucket": "needs-analysis",
+        "facts": {
+          "bumps": {
+            "status": "info",
+            "evidence": "tiny 0.0.3→0.0.4 (direct:production, patch → major)"
+          }
+        }
+      }
+    },
+    "bumps-missing-metadata": {
+      "set": {
+        "commits.items.0.message": "chore(deps): bump lodash from 4.17.21 to 4.17.22\n\nBumps lodash, but this commit message has no metadata block."
+      },
+      "expected": {
+        "bucket": "needs-analysis",
+        "facts": {
+          "bumps": {
+            "status": "info",
+            "evidence": "no updated-dependencies metadata (no updated-dependencies block)"
+          }
+        }
+      }
+    },
+    "bumps-malformed-metadata": {
+      "set": {
+        "commits.items.0.message": "chore(deps): bump lodash\n\n---\nupdated-dependencies:\n- dependency-name: lodash\n  dependency-version: 4.17.22\n"
+      },
+      "expected": {
+        "bucket": "needs-analysis",
+        "facts": {
+          "bumps": {
+            "status": "info",
+            "evidence": "no updated-dependencies metadata (updated-dependencies block is not terminated)"
+          }
+        }
+      }
+    },
+    "bumps-sha-pinned-no-update-type": {
+      "set": {
+        "commits.items.0.message": "chore(deps): bump the github-actions group with 2 updates\n\nUpdates `actions/setup-node` from 4.0.1 to 4.0.2\n\nUpdates `owner/repo/.github/workflows/ci.yml` from 05add1921fd03b0649f054ec2a7c54d162c0cd99 to 0331a2248010c61e01dd42c7dc211a1dad9088d0\n\n---\nupdated-dependencies:\n- dependency-name: actions/setup-node\n  dependency-version: 4.0.2\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: owner/repo/.github/workflows/ci.yml\n  dependency-version: 2fb7b81cf159a2d62ac7ef91960446450db6ed72\n  dependency-type: direct:production\n...\n"
+      },
+      "expected": {
+        "bucket": "needs-analysis",
+        "facts": {
+          "bumps": {
+            "status": "info",
+            "evidence": "actions/setup-node 4.0.1→4.0.2 (direct:production, patch → patch); owner/repo/.github/workflows/ci.yml 05add1921fd03b0649f054ec2a7c54d162c0cd99→2fb7b81cf159a2d62ac7ef91960446450db6ed72 (direct:production, no update-type → unknown)"
+          }
+        }
+      }
+    },
+    "bumps-grouped-mixed": {
+      "raw": "rocm-libraries-13313.json",
+      "set": {
+        "checks.totalCount": 1,
+        "checks.items": [
+          { "kind": "CheckRun", "name": "Setup", "status": "COMPLETED", "conclusion": "SUCCESS" }
+        ],
+        "pr.mergeStateStatus": "CLEAN"
+      },
+      "expected": {
+        "bucket": "needs-analysis",
+        "facts": {
+          "author": { "status": "ok", "evidence": "author Bot dependabot" },
+          "provenance": { "status": "ok", "evidence": "1 commit authored by dependabot[bot] and signed by GitHub (web-flow); same-repository branch" },
+          "draft": { "status": "ok", "evidence": "ready for review" },
+          "base": { "status": "ok", "evidence": "targets default branch develop" },
+          "head": { "status": "ok", "evidence": "head 8a34fa9" },
+          "bumps": {
+            "status": "info",
+            "evidence": "ROCm/TheRock/.github/workflows/multi_arch_ci_linux.yml 05add1921fd03b0649f054ec2a7c54d162c0cd99→2fb7b81cf159a2d62ac7ef91960446450db6ed72 (direct:production, no update-type → unknown, github-actions); ROCm/TheRock/.github/workflows/multi_arch_ci_windows.yml 05add1921fd03b0649f054ec2a7c54d162c0cd99→2fb7b81cf159a2d62ac7ef91960446450db6ed72 (direct:production, no update-type → unknown, github-actions); ROCm/TheRock/.github/workflows/setup_multi_arch.yml 05add1921fd03b0649f054ec2a7c54d162c0cd99→2fb7b81cf159a2d62ac7ef91960446450db6ed72 (direct:production, no update-type → unknown, github-actions); actions/checkout 4.4.0→7.0.1 (direct:production, major → major, github-actions); actions/create-github-app-token 2.1.4→3.2.0 (direct:production, major → major, github-actions); actions/download-artifact 4.3.0→8.0.1 (direct:production, major → major, github-actions); actions/labeler 6.1.0→7.0.0 (direct:production, major → major, github-actions); actions/setup-python 5.6.0→7.0.0 (direct:production, major → major, github-actions); actions/stale 10.4.0→11.0.0 (direct:production, major → major, github-actions); actions/upload-artifact 4.6.2→7.0.1 (direct:production, major → major, github-actions); aws-actions/configure-aws-credentials 6.1.3→6.3.0 (direct:production, minor → minor, github-actions); dorny/paths-filter 4.0.1→4.0.3 (direct:production, patch → patch, github-actions); github/codeql-action/analyze 4.35.3→4.38.2 (direct:production, minor → minor, github-actions); github/codeql-action/init 4.35.3→4.38.2 (direct:production, minor → minor, github-actions); iterative/setup-dvc 2.0.0→3.0.0 (direct:production, major → major, github-actions)"
+          },
+          "ci": { "status": "ok", "evidence": "1 passed" },
+          "mergeability": { "status": "ok", "evidence": "CLEAN: mergeable with no blocking requirements" },
+          "security": { "status": "none", "evidence": "no security label; Dependabot alerts not checked" }
+        }
+      }
+    },
+    "security-label": {
+      "set": { "pr.labels": ["dependencies", "Security"] },
+      "expected": {
+        "bucket": "routine",
+        "facts": { "security": { "status": "info", "evidence": "labelled security" } }
+      }
+    },
+    "security-alert-fixed": {
+      "alerts": {
+        "available": true,
+        "items": [
+          { "ghsa": "GHSA-bbbb-bbbb-bbbb", "severity": "low", "summary": "other", "ecosystem": "npm", "package": "fast-json-stringify", "patched": "6.3.1" },
+          { "ghsa": "GHSA-aaaa-aaaa-aaaa", "severity": "high", "summary": "bad", "ecosystem": "npm", "package": "fast-json-stringify", "patched": "6.2.0" },
+          { "ghsa": "GHSA-cccc-cccc-cccc", "severity": "high", "summary": "elsewhere", "ecosystem": "npm", "package": "lodash", "patched": "4.17.21" }
+        ]
+      },
+      "expected": {
+        "bucket": "routine",
+        "facts": {
+          "security": {
+            "status": "info",
+            "evidence": "fixes GHSA-aaaa-aaaa-aaaa (high) in fast-json-stringify, patched in 6.2.0; fixes GHSA-bbbb-bbbb-bbbb (low) in fast-json-stringify, patched in 6.3.1"
+          }
+        }
+      }
+    },
+    "security-alert-not-fixed": {
+      "alerts": {
+        "available": true,
+        "items": [
+          { "ghsa": "GHSA-aaaa-aaaa-aaaa", "severity": "high", "summary": "bad", "ecosystem": "npm", "package": "fast-json-stringify", "patched": "6.4.0" },
+          { "ghsa": "GHSA-bbbb-bbbb-bbbb", "severity": "high", "summary": "unpatched", "ecosystem": "npm", "package": "fast-json-stringify", "patched": null }
+        ]
+      },
+      "expected": {
+        "bucket": "routine",
+        "facts": {
+          "security": { "status": "none", "evidence": "no open Dependabot alert fixed by this bump; no security label" }
+        }
+      }
+    },
+    "security-alerts-unavailable": {
+      "alerts": { "available": false, "reason": "token lacks security_events scope" },
+      "expected": {
+        "bucket": "routine",
+        "facts": {
+          "security": {
+            "status": "none",
+            "evidence": "no security label; Dependabot alerts unavailable (token lacks security_events scope)"
+          }
+        }
+      }
+    },
+    "security-body-section-ignored": {
+      "set": {
+        "pr.body": "Bumps [fast-json-stringify](https://github.com/fastify/fast-json-stringify) from 6.3.0 to 6.3.1.\n<details>\n<summary>Vulnerabilities fixed</summary>\n<p>Sourced from the advisory database.</p>\n</details>\n"
+      },
+      "expected": {
+        "bucket": "routine",
+        "facts": {}
+      }
+    },
+    "security-plain-mention-ignored": {
+      "set": {
+        "pr.body": "Bumps [fast-json-stringify](https://github.com/fastify/fast-json-stringify) from 6.3.0 to 6.3.1.\n\nThe release notes mention security vulnerabilities in passing; see managing-security-vulnerabilities.\n"
+      },
+      "expected": {
+        "bucket": "routine",
+        "facts": {}
+      }
+    },
+    "precedence-attention-over-ci": {
+      "set": {
+        "pr.isDraft": true,
+        "checks.totalCount": 1,
+        "checks.items": [
+          { "kind": "CheckRun", "name": "test", "status": "COMPLETED", "conclusion": "FAILURE" }
+        ]
+      },
+      "expected": {
+        "bucket": "attention",
+        "facts": {
+          "draft": { "status": "fail", "evidence": "draft PR" },
+          "ci": { "status": "fail", "evidence": "failing: test (FAILURE)" }
+        }
+      }
+    },
+    "precedence-waiting-over-conflict": {
+      "set": {
+        "pr.mergeable": "CONFLICTING",
+        "pr.mergeStateStatus": "DIRTY",
+        "checks.totalCount": 1,
+        "checks.items": [
+          { "kind": "CheckRun", "name": "test", "status": "IN_PROGRESS", "conclusion": null }
+        ]
+      },
+      "expected": {
+        "bucket": "waiting",
+        "facts": {
+          "ci": { "status": "pending", "evidence": "running: test" },
+          "mergeability": {
+            "status": "fail",
+            "evidence": "merge conflicts (mergeable CONFLICTING, merge state DIRTY)"
+          }
+        }
+      }
+    },
+    "precedence-blocked-over-needs-analysis": {
+      "set": {
+        "checks.totalCount": 1,
+        "checks.items": [
+          { "kind": "CheckRun", "name": "test", "status": "COMPLETED", "conclusion": "FAILURE" }
+        ],
+        "commits.items.0.message": "chore(deps): bump chalk from 4.1.2 to 5.0.0\n\nBumps [chalk](https://github.com/chalk/chalk) from 4.1.2 to 5.0.0.\n\n---\nupdated-dependencies:\n- dependency-name: chalk\n  dependency-version: 5.0.0\n  dependency-type: direct:production\n  update-type: version-update:semver-major\n...\n"
+      },
+      "expected": {
+        "bucket": "blocked",
+        "facts": {
+          "bumps": {
+            "status": "info",
+            "evidence": "chalk 4.1.2→5.0.0 (direct:production, major → major)"
+          },
+          "ci": { "status": "fail", "evidence": "failing: test (FAILURE)" }
+        }
+      }
+    },
+    "renovate": {
+      "raw": "renovate-event-store-1038.json",
+      "expected": {
+        "bucket": "attention",
+        "facts": {
+          "author": { "status": "fail", "evidence": "not a Dependabot PR (author Bot renovate)" },
+          "provenance": {
+            "status": "fail",
+            "evidence": "4d55f9f: author email 29139614+renovate[bot]@users.noreply.github.com, author login renovate[bot]"
+          },
+          "draft": { "status": "ok", "evidence": "ready for review" },
+          "base": { "status": "ok", "evidence": "targets default branch main" },
+          "head": { "status": "ok", "evidence": "head 4d55f9f" },
+          "bumps": {
+            "status": "info",
+            "evidence": "no updated-dependencies metadata (no updated-dependencies block)"
+          },
+          "ci": { "status": "pending", "evidence": "running: Check version bump automation, Run lint" },
+          "mergeability": {
+            "status": "info",
+            "evidence": "BLOCKED: branch protection requirements (such as required reviews) not yet met"
+          },
+          "security": { "status": "none", "evidence": "no security label; Dependabot alerts not checked" }
+        }
+      }
+    }
+  }
+}

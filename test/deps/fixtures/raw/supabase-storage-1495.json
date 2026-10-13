@@ -1,0 +1,292 @@
+{
+  "data": {
+    "viewer": {
+      "login": "andyhorn"
+    },
+    "repository": {
+      "nameWithOwner": "supabase/storage",
+      "isArchived": false,
+      "viewerPermission": "READ",
+      "defaultBranchRef": {
+        "name": "master"
+      },
+      "pullRequest": {
+        "number": 1495,
+        "title": "chore(deps): bump fast-json-stringify from 6.3.0 to 7.0.1",
+        "body": "Bumps [fast-json-stringify](https://github.com/fastify/fast-json-stringify) from 6.3.0 to 7.0.1.\n<details>(trimmed)</details>\n<details>(trimmed)</details>\n<br />\n\n\n[![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=fast-json-stringify&package-manager=npm_and_yarn&previous-version=6.3.0&new-version=7.0.1)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\n\nDependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.\n\n[//]: # (dependabot-automerge-start)\n[//]: # (dependabot-automerge-end)\n\n---\n\n<details>(trimmed)</details>",
+        "url": "https://github.com/supabase/storage/pull/1495",
+        "isDraft": false,
+        "isCrossRepository": false,
+        "state": "OPEN",
+        "author": {
+          "__typename": "Bot",
+          "login": "dependabot"
+        },
+        "baseRefName": "master",
+        "headRefName": "dependabot/npm_and_yarn/fast-json-stringify-7.0.1",
+        "headRefOid": "5f9c17b911d426b40993997eb621ff8662989f19",
+        "mergeable": "MERGEABLE",
+        "mergeStateStatus": "BLOCKED",
+        "labels": {
+          "nodes": [
+            {
+              "name": "dependencies"
+            },
+            {
+              "name": "javascript"
+            }
+          ]
+        },
+        "commits": {
+          "totalCount": 1,
+          "nodes": [
+            {
+              "commit": {
+                "oid": "5f9c17b911d426b40993997eb621ff8662989f19",
+                "messageHeadline": "chore(deps): bump fast-json-stringify from 6.3.0 to 7.0.1",
+                "message": "chore(deps): bump fast-json-stringify from 6.3.0 to 7.0.1\n\nBumps [fast-json-stringify](https://github.com/fastify/fast-json-stringify) from 6.3.0 to 7.0.1.\n- [Release notes](https://github.com/fastify/fast-json-stringify/releases)\n- [Commits](https://github.com/fastify/fast-json-stringify/compare/v6.3.0...v7.0.1)\n\n---\nupdated-dependencies:\n- dependency-name: fast-json-stringify\n  dependency-version: 7.0.1\n  dependency-type: direct:production\n  update-type: version-update:semver-major\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+                "author": {
+                  "name": "dependabot[bot]",
+                  "email": "49699333+dependabot[bot]@users.noreply.github.com",
+                  "user": {
+                    "login": "dependabot[bot]"
+                  }
+                },
+                "committer": {
+                  "name": "GitHub",
+                  "email": "noreply@github.com",
+                  "user": null
+                },
+                "signature": {
+                  "isValid": true,
+                  "state": "VALID",
+                  "wasSignedByGitHub": true,
+                  "signer": {
+                    "login": "web-flow"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "headCommit": {
+          "nodes": [
+            {
+              "commit": {
+                "oid": "5f9c17b911d426b40993997eb621ff8662989f19",
+                "statusCheckRollup": {
+                  "state": "SUCCESS",
+                  "contexts": {
+                    "totalCount": 34,
+                    "nodes": [
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Local / direct / s3 / pg / single",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Lint & Build",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Lint / PR title",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Local / direct / s3 / pg / multitenant",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Local / direct / s3 / oriole / single",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Local / direct / s3 / oriole / multitenant",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Local / direct / s3 / multigres / single",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Local / direct / s3 / multigres / multitenant",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Local / direct / file / pg / single",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Local / direct / file / pg / multitenant",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Local / direct / file / oriole / single",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Local / direct / file / oriole / multitenant",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Local / direct / file / multigres / single",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Local / direct / file / multigres / multitenant",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Local / watt / s3 / pg / single",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Local / watt / s3 / pg / multitenant",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Remote",
+                        "status": "COMPLETED",
+                        "conclusion": "SKIPPED"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Test / Unit",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Test / Postgres 13",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Test / Postgres 14",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Test / Postgres 15",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Test / Postgres 16",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Test / Postgres 17",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Test / Postgres 18",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Test / OrioleDB",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Test / Multigres",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Test / Postgres",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Coveralls / Finalize",
+                        "status": "COMPLETED",
+                        "conclusion": "SUCCESS"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "Claude Code Review",
+                        "status": "COMPLETED",
+                        "conclusion": "NEUTRAL"
+                      },
+                      {
+                        "__typename": "CheckRun",
+                        "name": "CodeQL",
+                        "status": "COMPLETED",
+                        "conclusion": "NEUTRAL"
+                      },
+                      {
+                        "__typename": "StatusContext",
+                        "context": "Coveralls - rest-pg18",
+                        "state": "SUCCESS"
+                      },
+                      {
+                        "__typename": "StatusContext",
+                        "context": "Coveralls - unit",
+                        "state": "SUCCESS"
+                      },
+                      {
+                        "__typename": "StatusContext",
+                        "context": "coverage/coveralls (pull_request)",
+                        "state": "SUCCESS"
+                      },
+                      {
+                        "__typename": "StatusContext",
+                        "context": "coverage/coveralls/patch",
+                        "state": "SUCCESS"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
