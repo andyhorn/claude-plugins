@@ -1,0 +1,5 @@
+{
+  "plugins/git": "0.1.0",
+  "plugins/workflow": "0.1.0",
+  "plugins/deps": "0.1.0"
+}
