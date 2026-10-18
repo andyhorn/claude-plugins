@@ -1,0 +1,11 @@
+config:
+  # Prose and agent prompts are written as one line per paragraph.
+  MD013: false
+  # Agent files start with prompt text after frontmatter, not a heading.
+  MD041: false
+  # Prompt templates use untyped fences for plain output examples.
+  MD040: false
+globs:
+  - "**/*.md"
+ignores:
+  - "node_modules/**"

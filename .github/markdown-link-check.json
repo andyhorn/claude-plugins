@@ -1,0 +1,7 @@
+{
+  "ignorePatterns": [{ "pattern": "^https://www\\.tiktok\\.com/" }],
+  "aliveStatusCodes": [200, 206, 403, 429],
+  "retryOn429": true,
+  "retryCount": 3,
+  "timeout": "20s"
+}

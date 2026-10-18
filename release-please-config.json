@@ -7,7 +7,11 @@
     "plugins/git": {
       "component": "git",
       "extra-files": [
-        { "type": "json", "path": ".claude-plugin/plugin.json", "jsonpath": "$.version" },
+        {
+          "type": "json",
+          "path": ".claude-plugin/plugin.json",
+          "jsonpath": "$.version"
+        },
         {
           "type": "json",
           "path": "/.claude-plugin/marketplace.json",
@@ -18,7 +22,11 @@
     "plugins/workflow": {
       "component": "workflow",
       "extra-files": [
-        { "type": "json", "path": ".claude-plugin/plugin.json", "jsonpath": "$.version" },
+        {
+          "type": "json",
+          "path": ".claude-plugin/plugin.json",
+          "jsonpath": "$.version"
+        },
         {
           "type": "json",
           "path": "/.claude-plugin/marketplace.json",
@@ -29,7 +37,11 @@
     "plugins/rigor": {
       "component": "rigor",
       "extra-files": [
-        { "type": "json", "path": ".claude-plugin/plugin.json", "jsonpath": "$.version" },
+        {
+          "type": "json",
+          "path": ".claude-plugin/plugin.json",
+          "jsonpath": "$.version"
+        },
         {
           "type": "json",
           "path": "/.claude-plugin/marketplace.json",
@@ -40,7 +52,11 @@
     "plugins/deps": {
       "component": "deps",
       "extra-files": [
-        { "type": "json", "path": ".claude-plugin/plugin.json", "jsonpath": "$.version" }
+        {
+          "type": "json",
+          "path": ".claude-plugin/plugin.json",
+          "jsonpath": "$.version"
+        }
       ]
     }
   }
