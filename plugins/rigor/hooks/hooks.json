@@ -1,0 +1,16 @@
+{
+  "description": "rigor plugin: loads the operating rules at session start",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/session-rules.mjs\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

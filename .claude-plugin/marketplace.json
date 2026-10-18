@@ -24,6 +24,14 @@
       "source": "./plugins/workflow",
       "category": "productivity",
       "tags": ["review", "decisions"]
+    },
+    {
+      "name": "rigor",
+      "description": "Session discipline: verify claims, push back, stress-test plans with operator and adversary personas, and grade deliverables 0-100 with a reviewer agent.",
+      "version": "0.1.0",
+      "source": "./plugins/rigor",
+      "category": "productivity",
+      "tags": ["review", "verification", "planning"]
     }
   ]
 }
