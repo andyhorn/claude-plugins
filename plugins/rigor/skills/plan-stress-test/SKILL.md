@@ -9,8 +9,7 @@ Every non-trivial plan gets two critics before the user sees it as final. You me
 
 ## When it applies
 
-- Apply: any plan with three or more steps, any plan that spends the user's money or hours, any plan that changes shared or hard-to-reverse state.
-- Skip: one- or two-step tasks that spend nothing, change no shared state, and are easy to undo, and routine commands.
+The "Stress-test plans" rule in `rules.md` defines which plans need a stress test. Routine commands never do.
 
 ## Procedure
 
