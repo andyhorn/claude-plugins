@@ -9,15 +9,43 @@
     "expected": {
       "bucket": "routine",
       "facts": [
-        { "fact": "author", "status": "ok", "evidence": "author Bot dependabot" },
-        { "fact": "provenance", "status": "ok", "evidence": "1 commit authored by dependabot[bot] and signed by GitHub (web-flow); same-repository branch" },
+        {
+          "fact": "author",
+          "status": "ok",
+          "evidence": "author Bot dependabot"
+        },
+        {
+          "fact": "provenance",
+          "status": "ok",
+          "evidence": "1 commit authored by dependabot[bot] and signed by GitHub (web-flow); same-repository branch"
+        },
         { "fact": "draft", "status": "ok", "evidence": "ready for review" },
-        { "fact": "base", "status": "ok", "evidence": "targets default branch master" },
+        {
+          "fact": "base",
+          "status": "ok",
+          "evidence": "targets default branch master"
+        },
         { "fact": "head", "status": "ok", "evidence": "head 5f9c17b" },
-        { "fact": "bumps", "status": "ok", "evidence": "fast-json-stringify 6.3.0→6.3.1 (direct:production, patch → patch)" },
-        { "fact": "ci", "status": "ok", "evidence": "31 passed, 3 skipped/neutral" },
-        { "fact": "mergeability", "status": "ok", "evidence": "CLEAN: mergeable with no blocking requirements" },
-        { "fact": "security", "status": "none", "evidence": "no security label; Dependabot alerts not checked" }
+        {
+          "fact": "bumps",
+          "status": "ok",
+          "evidence": "fast-json-stringify 6.3.0→6.3.1 (direct:production, patch → patch)"
+        },
+        {
+          "fact": "ci",
+          "status": "ok",
+          "evidence": "31 passed, 3 skipped/neutral"
+        },
+        {
+          "fact": "mergeability",
+          "status": "ok",
+          "evidence": "CLEAN: mergeable with no blocking requirements"
+        },
+        {
+          "fact": "security",
+          "status": "none",
+          "evidence": "no security label; Dependabot alerts not checked"
+        }
       ]
     }
   },
@@ -26,21 +54,33 @@
       "set": { "commits.items.0.signature.valid": false },
       "expected": {
         "bucket": "attention",
-        "facts": { "provenance": { "status": "fail", "evidence": "5f9c17b: unsigned" } }
+        "facts": {
+          "provenance": { "status": "fail", "evidence": "5f9c17b: unsigned" }
+        }
       }
     },
     "provenance-not-signed-by-github": {
       "set": { "commits.items.0.signature.signedByGitHub": false },
       "expected": {
         "bucket": "attention",
-        "facts": { "provenance": { "status": "fail", "evidence": "5f9c17b: not signed by GitHub" } }
+        "facts": {
+          "provenance": {
+            "status": "fail",
+            "evidence": "5f9c17b: not signed by GitHub"
+          }
+        }
       }
     },
     "provenance-non-web-flow-signer": {
       "set": { "commits.items.0.signature.signer": "some-contributor" },
       "expected": {
         "bucket": "attention",
-        "facts": { "provenance": { "status": "fail", "evidence": "5f9c17b: signer some-contributor" } }
+        "facts": {
+          "provenance": {
+            "status": "fail",
+            "evidence": "5f9c17b: signer some-contributor"
+          }
+        }
       }
     },
     "provenance-spoofed-author": {
@@ -63,14 +103,21 @@
       "set": { "pr.isCrossRepository": true },
       "expected": {
         "bucket": "attention",
-        "facts": { "provenance": { "status": "fail", "evidence": "cross-repository" } }
+        "facts": {
+          "provenance": { "status": "fail", "evidence": "cross-repository" }
+        }
       }
     },
     "provenance-partial-commits": {
       "set": { "commits.totalCount": 3 },
       "expected": {
         "bucket": "attention",
-        "facts": { "provenance": { "status": "fail", "evidence": "only 1 of 3 commits fetched" } }
+        "facts": {
+          "provenance": {
+            "status": "fail",
+            "evidence": "only 1 of 3 commits fetched"
+          }
+        }
       }
     },
     "provenance-human-update-branch": {
@@ -84,7 +131,11 @@
             "email": "12345+human@users.noreply.github.com",
             "login": "human"
           },
-          "signature": { "valid": true, "signedByGitHub": true, "signer": "web-flow" }
+          "signature": {
+            "valid": true,
+            "signedByGitHub": true,
+            "signer": "web-flow"
+          }
         },
         "pr.headRefOid": "aaaaaaa1111111111111111111111111111111aa",
         "checks.oid": "aaaaaaa1111111111111111111111111111111aa"
@@ -111,7 +162,12 @@
       "set": { "pr.baseRefName": "develop" },
       "expected": {
         "bucket": "attention",
-        "facts": { "base": { "status": "fail", "evidence": "targets develop, default branch is master" } }
+        "facts": {
+          "base": {
+            "status": "fail",
+            "evidence": "targets develop, default branch is master"
+          }
+        }
       }
     },
     "head-moved": {
@@ -142,8 +198,18 @@
       "set": {
         "checks.totalCount": 2,
         "checks.items": [
-          { "kind": "CheckRun", "name": "build", "status": "COMPLETED", "conclusion": "SUCCESS" },
-          { "kind": "StatusContext", "name": "coverage", "status": null, "conclusion": "SUCCESS" }
+          {
+            "kind": "CheckRun",
+            "name": "build",
+            "status": "COMPLETED",
+            "conclusion": "SUCCESS"
+          },
+          {
+            "kind": "StatusContext",
+            "name": "coverage",
+            "status": null,
+            "conclusion": "SUCCESS"
+          }
         ]
       },
       "expected": {
@@ -155,29 +221,64 @@
       "set": {
         "checks.totalCount": 3,
         "checks.items": [
-          { "kind": "CheckRun", "name": "build", "status": "COMPLETED", "conclusion": "SUCCESS" },
-          { "kind": "CheckRun", "name": "test", "status": "IN_PROGRESS", "conclusion": null },
-          { "kind": "CheckRun", "name": "lint", "status": "QUEUED", "conclusion": null }
+          {
+            "kind": "CheckRun",
+            "name": "build",
+            "status": "COMPLETED",
+            "conclusion": "SUCCESS"
+          },
+          {
+            "kind": "CheckRun",
+            "name": "test",
+            "status": "IN_PROGRESS",
+            "conclusion": null
+          },
+          {
+            "kind": "CheckRun",
+            "name": "lint",
+            "status": "QUEUED",
+            "conclusion": null
+          }
         ]
       },
       "expected": {
         "bucket": "waiting",
-        "facts": { "ci": { "status": "pending", "evidence": "running: lint, test" } }
+        "facts": {
+          "ci": { "status": "pending", "evidence": "running: lint, test" }
+        }
       }
     },
     "ci-running-and-failing": {
       "set": {
         "checks.totalCount": 3,
         "checks.items": [
-          { "kind": "CheckRun", "name": "build", "status": "COMPLETED", "conclusion": "TIMED_OUT" },
-          { "kind": "StatusContext", "name": "deploy", "status": null, "conclusion": "PENDING" },
-          { "kind": "CheckRun", "name": "test", "status": "WAITING", "conclusion": null }
+          {
+            "kind": "CheckRun",
+            "name": "build",
+            "status": "COMPLETED",
+            "conclusion": "TIMED_OUT"
+          },
+          {
+            "kind": "StatusContext",
+            "name": "deploy",
+            "status": null,
+            "conclusion": "PENDING"
+          },
+          {
+            "kind": "CheckRun",
+            "name": "test",
+            "status": "WAITING",
+            "conclusion": null
+          }
         ]
       },
       "expected": {
         "bucket": "waiting",
         "facts": {
-          "ci": { "status": "pending", "evidence": "running: deploy, test; failing: build (TIMED_OUT)" }
+          "ci": {
+            "status": "pending",
+            "evidence": "running: deploy, test; failing: build (TIMED_OUT)"
+          }
         }
       }
     },
@@ -185,15 +286,33 @@
       "set": {
         "checks.totalCount": 3,
         "checks.items": [
-          { "kind": "CheckRun", "name": "build", "status": "COMPLETED", "conclusion": "SUCCESS" },
-          { "kind": "CheckRun", "name": "test", "status": "COMPLETED", "conclusion": "FAILURE" },
-          { "kind": "StatusContext", "name": "ci/other", "status": null, "conclusion": "ERROR" }
+          {
+            "kind": "CheckRun",
+            "name": "build",
+            "status": "COMPLETED",
+            "conclusion": "SUCCESS"
+          },
+          {
+            "kind": "CheckRun",
+            "name": "test",
+            "status": "COMPLETED",
+            "conclusion": "FAILURE"
+          },
+          {
+            "kind": "StatusContext",
+            "name": "ci/other",
+            "status": null,
+            "conclusion": "ERROR"
+          }
         ]
       },
       "expected": {
         "bucket": "blocked",
         "facts": {
-          "ci": { "status": "fail", "evidence": "failing: ci/other (ERROR), test (FAILURE)" }
+          "ci": {
+            "status": "fail",
+            "evidence": "failing: ci/other (ERROR), test (FAILURE)"
+          }
         }
       }
     },
@@ -201,40 +320,78 @@
       "set": {
         "checks.totalCount": 2,
         "checks.items": [
-          { "kind": "CheckRun", "name": "build", "status": "COMPLETED", "conclusion": "SUCCESS" },
-          { "kind": "CheckRun", "name": "e2e", "status": "COMPLETED", "conclusion": "CANCELLED" }
+          {
+            "kind": "CheckRun",
+            "name": "build",
+            "status": "COMPLETED",
+            "conclusion": "SUCCESS"
+          },
+          {
+            "kind": "CheckRun",
+            "name": "e2e",
+            "status": "COMPLETED",
+            "conclusion": "CANCELLED"
+          }
         ]
       },
       "expected": {
         "bucket": "blocked",
-        "facts": { "ci": { "status": "fail", "evidence": "failing: e2e (CANCELLED)" } }
+        "facts": {
+          "ci": { "status": "fail", "evidence": "failing: e2e (CANCELLED)" }
+        }
       }
     },
     "ci-empty": {
-      "set": { "checks.totalCount": 0, "checks.items": [], "checks.rollupState": null },
+      "set": {
+        "checks.totalCount": 0,
+        "checks.items": [],
+        "checks.rollupState": null
+      },
       "expected": {
         "bucket": "blocked",
-        "facts": { "ci": { "status": "none", "evidence": "no checks reported" } }
+        "facts": {
+          "ci": { "status": "none", "evidence": "no checks reported" }
+        }
       }
     },
     "ci-all-skipped": {
       "set": {
         "checks.totalCount": 2,
         "checks.items": [
-          { "kind": "CheckRun", "name": "Remote", "status": "COMPLETED", "conclusion": "SKIPPED" },
-          { "kind": "CheckRun", "name": "CodeQL", "status": "COMPLETED", "conclusion": "NEUTRAL" }
+          {
+            "kind": "CheckRun",
+            "name": "Remote",
+            "status": "COMPLETED",
+            "conclusion": "SKIPPED"
+          },
+          {
+            "kind": "CheckRun",
+            "name": "CodeQL",
+            "status": "COMPLETED",
+            "conclusion": "NEUTRAL"
+          }
         ]
       },
       "expected": {
         "bucket": "blocked",
-        "facts": { "ci": { "status": "none", "evidence": "all 2 checks skipped or neutral" } }
+        "facts": {
+          "ci": {
+            "status": "none",
+            "evidence": "all 2 checks skipped or neutral"
+          }
+        }
       }
     },
     "ci-incomplete": {
       "set": { "checks.totalCount": 156 },
       "expected": {
         "bucket": "waiting",
-        "facts": { "ci": { "status": "pending", "evidence": "only 34 of 156 checks fetched" } }
+        "facts": {
+          "ci": {
+            "status": "pending",
+            "evidence": "only 34 of 156 checks fetched"
+          }
+        }
       }
     },
     "mergeability-conflicting": {
@@ -266,7 +423,10 @@
       "expected": {
         "bucket": "waiting",
         "facts": {
-          "mergeability": { "status": "pending", "evidence": "BEHIND: branch is behind the base branch" }
+          "mergeability": {
+            "status": "pending",
+            "evidence": "BEHIND: branch is behind the base branch"
+          }
         }
       }
     },
@@ -437,7 +597,12 @@
       "set": {
         "checks.totalCount": 1,
         "checks.items": [
-          { "kind": "CheckRun", "name": "Setup", "status": "COMPLETED", "conclusion": "SUCCESS" }
+          {
+            "kind": "CheckRun",
+            "name": "Setup",
+            "status": "COMPLETED",
+            "conclusion": "SUCCESS"
+          }
         ],
         "pr.mergeStateStatus": "CLEAN"
       },
@@ -445,17 +610,29 @@
         "bucket": "needs-analysis",
         "facts": {
           "author": { "status": "ok", "evidence": "author Bot dependabot" },
-          "provenance": { "status": "ok", "evidence": "1 commit authored by dependabot[bot] and signed by GitHub (web-flow); same-repository branch" },
+          "provenance": {
+            "status": "ok",
+            "evidence": "1 commit authored by dependabot[bot] and signed by GitHub (web-flow); same-repository branch"
+          },
           "draft": { "status": "ok", "evidence": "ready for review" },
-          "base": { "status": "ok", "evidence": "targets default branch develop" },
+          "base": {
+            "status": "ok",
+            "evidence": "targets default branch develop"
+          },
           "head": { "status": "ok", "evidence": "head 8a34fa9" },
           "bumps": {
             "status": "info",
             "evidence": "ROCm/TheRock/.github/workflows/multi_arch_ci_linux.yml 05add1921fd03b0649f054ec2a7c54d162c0cd99→2fb7b81cf159a2d62ac7ef91960446450db6ed72 (direct:production, no update-type → unknown, github-actions); ROCm/TheRock/.github/workflows/multi_arch_ci_windows.yml 05add1921fd03b0649f054ec2a7c54d162c0cd99→2fb7b81cf159a2d62ac7ef91960446450db6ed72 (direct:production, no update-type → unknown, github-actions); ROCm/TheRock/.github/workflows/setup_multi_arch.yml 05add1921fd03b0649f054ec2a7c54d162c0cd99→2fb7b81cf159a2d62ac7ef91960446450db6ed72 (direct:production, no update-type → unknown, github-actions); actions/checkout 4.4.0→7.0.1 (direct:production, major → major, github-actions); actions/create-github-app-token 2.1.4→3.2.0 (direct:production, major → major, github-actions); actions/download-artifact 4.3.0→8.0.1 (direct:production, major → major, github-actions); actions/labeler 6.1.0→7.0.0 (direct:production, major → major, github-actions); actions/setup-python 5.6.0→7.0.0 (direct:production, major → major, github-actions); actions/stale 10.4.0→11.0.0 (direct:production, major → major, github-actions); actions/upload-artifact 4.6.2→7.0.1 (direct:production, major → major, github-actions); aws-actions/configure-aws-credentials 6.1.3→6.3.0 (direct:production, minor → minor, github-actions); dorny/paths-filter 4.0.1→4.0.3 (direct:production, patch → patch, github-actions); github/codeql-action/analyze 4.35.3→4.38.2 (direct:production, minor → minor, github-actions); github/codeql-action/init 4.35.3→4.38.2 (direct:production, minor → minor, github-actions); iterative/setup-dvc 2.0.0→3.0.0 (direct:production, major → major, github-actions)"
           },
           "ci": { "status": "ok", "evidence": "1 passed" },
-          "mergeability": { "status": "ok", "evidence": "CLEAN: mergeable with no blocking requirements" },
-          "security": { "status": "none", "evidence": "no security label; Dependabot alerts not checked" }
+          "mergeability": {
+            "status": "ok",
+            "evidence": "CLEAN: mergeable with no blocking requirements"
+          },
+          "security": {
+            "status": "none",
+            "evidence": "no security label; Dependabot alerts not checked"
+          }
         }
       }
     },
@@ -463,16 +640,39 @@
       "set": { "pr.labels": ["dependencies", "Security"] },
       "expected": {
         "bucket": "routine",
-        "facts": { "security": { "status": "info", "evidence": "labelled security" } }
+        "facts": {
+          "security": { "status": "info", "evidence": "labelled security" }
+        }
       }
     },
     "security-alert-fixed": {
       "alerts": {
         "available": true,
         "items": [
-          { "ghsa": "GHSA-bbbb-bbbb-bbbb", "severity": "low", "summary": "other", "ecosystem": "npm", "package": "fast-json-stringify", "patched": "6.3.1" },
-          { "ghsa": "GHSA-aaaa-aaaa-aaaa", "severity": "high", "summary": "bad", "ecosystem": "npm", "package": "fast-json-stringify", "patched": "6.2.0" },
-          { "ghsa": "GHSA-cccc-cccc-cccc", "severity": "high", "summary": "elsewhere", "ecosystem": "npm", "package": "lodash", "patched": "4.17.21" }
+          {
+            "ghsa": "GHSA-bbbb-bbbb-bbbb",
+            "severity": "low",
+            "summary": "other",
+            "ecosystem": "npm",
+            "package": "fast-json-stringify",
+            "patched": "6.3.1"
+          },
+          {
+            "ghsa": "GHSA-aaaa-aaaa-aaaa",
+            "severity": "high",
+            "summary": "bad",
+            "ecosystem": "npm",
+            "package": "fast-json-stringify",
+            "patched": "6.2.0"
+          },
+          {
+            "ghsa": "GHSA-cccc-cccc-cccc",
+            "severity": "high",
+            "summary": "elsewhere",
+            "ecosystem": "npm",
+            "package": "lodash",
+            "patched": "4.17.21"
+          }
         ]
       },
       "expected": {
@@ -489,19 +689,39 @@
       "alerts": {
         "available": true,
         "items": [
-          { "ghsa": "GHSA-aaaa-aaaa-aaaa", "severity": "high", "summary": "bad", "ecosystem": "npm", "package": "fast-json-stringify", "patched": "6.4.0" },
-          { "ghsa": "GHSA-bbbb-bbbb-bbbb", "severity": "high", "summary": "unpatched", "ecosystem": "npm", "package": "fast-json-stringify", "patched": null }
+          {
+            "ghsa": "GHSA-aaaa-aaaa-aaaa",
+            "severity": "high",
+            "summary": "bad",
+            "ecosystem": "npm",
+            "package": "fast-json-stringify",
+            "patched": "6.4.0"
+          },
+          {
+            "ghsa": "GHSA-bbbb-bbbb-bbbb",
+            "severity": "high",
+            "summary": "unpatched",
+            "ecosystem": "npm",
+            "package": "fast-json-stringify",
+            "patched": null
+          }
         ]
       },
       "expected": {
         "bucket": "routine",
         "facts": {
-          "security": { "status": "none", "evidence": "no open Dependabot alert fixed by this bump; no security label" }
+          "security": {
+            "status": "none",
+            "evidence": "no open Dependabot alert fixed by this bump; no security label"
+          }
         }
       }
     },
     "security-alerts-unavailable": {
-      "alerts": { "available": false, "reason": "token lacks security_events scope" },
+      "alerts": {
+        "available": false,
+        "reason": "token lacks security_events scope"
+      },
       "expected": {
         "bucket": "routine",
         "facts": {
@@ -535,7 +755,12 @@
         "pr.isDraft": true,
         "checks.totalCount": 1,
         "checks.items": [
-          { "kind": "CheckRun", "name": "test", "status": "COMPLETED", "conclusion": "FAILURE" }
+          {
+            "kind": "CheckRun",
+            "name": "test",
+            "status": "COMPLETED",
+            "conclusion": "FAILURE"
+          }
         ]
       },
       "expected": {
@@ -552,7 +777,12 @@
         "pr.mergeStateStatus": "DIRTY",
         "checks.totalCount": 1,
         "checks.items": [
-          { "kind": "CheckRun", "name": "test", "status": "IN_PROGRESS", "conclusion": null }
+          {
+            "kind": "CheckRun",
+            "name": "test",
+            "status": "IN_PROGRESS",
+            "conclusion": null
+          }
         ]
       },
       "expected": {
@@ -570,7 +800,12 @@
       "set": {
         "checks.totalCount": 1,
         "checks.items": [
-          { "kind": "CheckRun", "name": "test", "status": "COMPLETED", "conclusion": "FAILURE" }
+          {
+            "kind": "CheckRun",
+            "name": "test",
+            "status": "COMPLETED",
+            "conclusion": "FAILURE"
+          }
         ],
         "commits.items.0.message": "chore(deps): bump chalk from 4.1.2 to 5.0.0\n\nBumps [chalk](https://github.com/chalk/chalk) from 4.1.2 to 5.0.0.\n\n---\nupdated-dependencies:\n- dependency-name: chalk\n  dependency-version: 5.0.0\n  dependency-type: direct:production\n  update-type: version-update:semver-major\n...\n"
       },
@@ -590,7 +825,10 @@
       "expected": {
         "bucket": "attention",
         "facts": {
-          "author": { "status": "fail", "evidence": "not a Dependabot PR (author Bot renovate)" },
+          "author": {
+            "status": "fail",
+            "evidence": "not a Dependabot PR (author Bot renovate)"
+          },
           "provenance": {
             "status": "fail",
             "evidence": "4d55f9f: author email 29139614+renovate[bot]@users.noreply.github.com, author login renovate[bot]"
@@ -602,12 +840,18 @@
             "status": "info",
             "evidence": "no updated-dependencies metadata (no updated-dependencies block)"
           },
-          "ci": { "status": "pending", "evidence": "running: Check version bump automation, Run lint" },
+          "ci": {
+            "status": "pending",
+            "evidence": "running: Check version bump automation, Run lint"
+          },
           "mergeability": {
             "status": "info",
             "evidence": "BLOCKED: branch protection requirements (such as required reviews) not yet met"
           },
-          "security": { "status": "none", "evidence": "no security label; Dependabot alerts not checked" }
+          "security": {
+            "status": "none",
+            "evidence": "no security label; Dependabot alerts not checked"
+          }
         }
       }
     }

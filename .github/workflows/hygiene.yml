@@ -1,0 +1,64 @@
+name: Hygiene
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # External links rot without any commit; catch it weekly.
+    - cron: '17 6 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  markdown:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 'lts/*'
+      - run: npx --yes markdownlint-cli2@0.18.1
+
+  json:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 'lts/*'
+      # Fails on invalid JSON as well as on formatting drift.
+      - run: npx --yes prettier@3.6.2 --check '**/*.json'
+
+  links:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 'lts/*'
+      - run: >-
+          git ls-files '*.md' -z |
+          xargs -0 -n1 npx --yes markdown-link-check@3.13.7 -q
+          -c .github/markdown-link-check.json
+
+  typos:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: pip install codespell==2.4.1
+      # Fixtures are captured third-party payloads; leave their text alone.
+      - run: git ls-files -z -- . ':!test/deps/fixtures' | xargs -0 codespell

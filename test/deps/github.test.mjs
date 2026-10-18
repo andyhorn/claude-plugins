@@ -121,7 +121,7 @@ describe('listOpenAlerts', () => {
     assert.match(context.reason, /admin:repo_hook/);
   });
 
-  it('never throws on unparseable output or a runner failure', async () => {
+  it('never throws on unparsable output or a runner failure', async () => {
     const garbled = await createGitHub({ run: scriptedRunner([ok('not json')]).run }).listOpenAlerts(repo);
     assert.equal(garbled.available, false);
     const rejecting = await createGitHub({
