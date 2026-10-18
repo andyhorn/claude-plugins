@@ -10,7 +10,11 @@ const READ_ONLY_TOOLS = {
 
 function frontmatterOf(agent) {
   const source = readFileSync(new URL(`../../plugins/rigor/agents/${agent}.md`, import.meta.url), 'utf8');
-  return source.split('---')[1];
+  const lines = source.split('\n');
+  assert.equal(lines[0], '---', `${agent} starts with frontmatter`);
+  const close = lines.indexOf('---', 1);
+  assert.ok(close > 0, `${agent} closes its frontmatter`);
+  return lines.slice(1, close).join('\n');
 }
 
 function toolsValueOf(agent) {
@@ -25,7 +29,7 @@ describe('rigor agents', () => {
       const value = toolsValueOf(agent);
       assert.ok(value.length > 0, `${agent} tools must be on one line, not a YAML block list`);
       assert.ok(!value.startsWith('['), `${agent} tools must be a plain comma-separated string, not a YAML flow list`);
-      assert.deepEqual(value.split(',').map((tool) => tool.trim()), expected);
+      assert.deepEqual(value.split(',').map((tool) => tool.trim()).sort(), [...expected].sort());
     });
   }
 

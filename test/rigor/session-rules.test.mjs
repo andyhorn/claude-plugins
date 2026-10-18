@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
@@ -37,5 +37,14 @@ describe('session-rules', () => {
     const hooks = JSON.parse(readFileSync(HOOKS, 'utf8')).hooks;
     assert.equal(hooks.SessionStart.length, 1);
     assert.equal(hooks.SessionStart[0].matcher, undefined);
+  });
+
+  it('runs the script the plugin ships', () => {
+    const [entry] = JSON.parse(readFileSync(HOOKS, 'utf8')).hooks.SessionStart[0].hooks;
+    const prefix = 'node "${CLAUDE_PLUGIN_ROOT}/';
+    assert.ok(entry.command.startsWith(prefix), 'command runs node from the plugin root');
+    const relative = entry.command.slice(prefix.length).replace(/"$/, '');
+    assert.ok(existsSync(new URL(`../../plugins/rigor/${relative}`, import.meta.url)), `${relative} exists`);
+    assert.equal(relative, 'scripts/session-rules.mjs');
   });
 });

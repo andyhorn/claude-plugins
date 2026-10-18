@@ -10,7 +10,7 @@ A deliverable is not done until `rigor:work-reviewer` scores it 90 or more with 
 ## When it applies
 
 - Apply: a file you wrote or changed (code, config, docs), and a written plan or document.
-- Skip: chat replies, routine commands, and questions with a one-line answer.
+- Skip: chat replies, routine commands, questions with a one-line answer, and trivial edits (a typo or comment fix, a formatting-only change, a scratch file).
 
 ## Procedure
 
@@ -27,8 +27,8 @@ A deliverable is not done until `rigor:work-reviewer` scores it 90 or more with 
 4. Read the result.
    - Score 90 or more with an empty MUST-FIX list: stop. Report the score and the CHECKED list to the user.
    - Score under 90, or any MUST-FIX item at any score: rework every MUST-FIX item. Do not skip one because you disagree. If you think an item is wrong, check it against a primary source and say so in the next packet.
-5. Re-run the verify command for any file you changed. Then go to step 2 and rebuild the packet with the new verify output, the new git state, and the prior must-fix items. Then dispatch again (step 3).
-6. Cap: 3 rounds. If round 3 scores under 90, stop. Show the user the score, the open deductions, and what you tried. Do not start a fourth round without the user's go-ahead.
+5. After every rework, repeat from step 2: re-run the verify command and rebuild the packet with the new verify output, the new git state, and the prior must-fix items.
+6. Cap: 3 rounds. If round 3 does not meet the stop condition in step 4 (a score under 90, or any open MUST-FIX item), stop. Show the user the score, the open deductions, and what you tried. Do not start a fourth round without the user's go-ahead.
 
 ## Report to the user
 
@@ -39,5 +39,3 @@ State the round count, each round's score, and what changed between rounds. Quot
 - A claim that the reviewer marks UNCONFIRMED goes to the user as unconfirmed, or you verify it.
 - Do not ask the reviewer for a "quick" or "lenient" pass.
 - The reviewer is read-only and cannot run commands. You make all fixes and you run all checks.
-
-Credit: these rules are based on [a video](https://www.tiktok.com/@chasetalks1.0/video/7676275825049652493) by Chase Howard ([@chasetalks1.0](https://www.tiktok.com/@chasetalks1.0) on TikTok). The wording of the skills and agents was written for this plugin.

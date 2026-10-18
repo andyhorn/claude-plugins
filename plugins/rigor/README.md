@@ -18,7 +18,7 @@ The `rigor:work-reviewer` agent has no Edit, Write or Bash tool, and Claude Code
 
 ## Scope defaults
 
-- Grading applies to deliverables (a file written or changed, a written plan or document), not chat replies.
+- Grading applies to deliverables (a file written or changed, a written plan or document), not chat replies or trivial edits (a typo or comment fix, a formatting-only change, a scratch file).
 - Plan stress tests apply to plans of three or more steps, and to plans that spend the user's money or hours or change shared or hard-to-reverse state.
 - Pushback applies to claims, decisions and plans, not routine commands.
 

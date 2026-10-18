@@ -31,5 +31,3 @@ Every non-trivial plan gets two critics before the user sees it as final. You me
 - Do not skip the adversary because the plan "looks fine".
 - Do not average the two views. Decide, and give the reason.
 - Facts that can go stale must come back CONFIRMED by a fresh check, or they stay open questions.
-
-Credit: these rules are based on [a video](https://www.tiktok.com/@chasetalks1.0/video/7676275825049652493) by Chase Howard ([@chasetalks1.0](https://www.tiktok.com/@chasetalks1.0) on TikTok). The wording of the skills and agents was written for this plugin.
