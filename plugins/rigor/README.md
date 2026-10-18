@@ -31,8 +31,4 @@ The `rigor:work-reviewer` agent has no Edit, Write or Bash tool, and Claude Code
 /plugin install rigor@andyhorn
 ```
 
-The plugin namespaces its components, so the agents are `rigor:work-reviewer`, `rigor:operator` and `rigor:adversary`. If you keep an earlier draft of these rules at user level, remove it after you install the plugin, or the rules load twice and the wording disagrees. The draft's pieces are:
-
-- the "Operating rules" section in `~/.claude/CLAUDE.md`
-- `~/.claude/agents/work-reviewer.md`, `operator.md` and `adversary.md`, which are unnamespaced (the user-level `work-reviewer` also still has Bash)
-- `~/.claude/skills/grade-loop/` and `~/.claude/skills/plan-stress-test/`, which are unnamespaced too
+The plugin namespaces its components, so the agents are `rigor:work-reviewer`, `rigor:operator` and `rigor:adversary`.
