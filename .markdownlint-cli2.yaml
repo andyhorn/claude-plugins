@@ -9,3 +9,5 @@ globs:
   - "**/*.md"
 ignores:
   - "node_modules/**"
+  # release-please regenerates these and emits a double blank line after each version heading.
+  - "**/CHANGELOG.md"
