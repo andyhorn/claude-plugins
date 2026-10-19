@@ -1,0 +1,2 @@
+# release-please rewrites this file with every array expanded, which --check rejects.
+.claude-plugin/marketplace.json
