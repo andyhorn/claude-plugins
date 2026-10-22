@@ -254,3 +254,17 @@ claude --plugin-dir ./plugins/workflow
 - Whether the inline discipline works in sessions that have only the pointer cannot be measured before shipping. Check informally after a few real sessions.
 - The dry run is a single stochastic sample.
 - On 2.1.296, whether `--plugin-dir` takes precedence over an installed plugin is unconfirmed; that is why the installed plugin is disabled for the dry run.
+- The stale-code, foreign-entry, and non-code-subject dry runs (steps 3–5) did not run. The scripted runs could not commit in the scratch clone. The stale-code path is covered only by the written rules.
+
+## Changes after the dry run
+
+Three scripted dry runs and one review round changed the shipped skill. Where this plan and the skill disagree, the skill is authoritative.
+
+- **Pointer target:** `AGENTS.md` is used only when no `CLAUDE.md`, `.claude/CLAUDE.md`, or `CLAUDE.local.md` exists in the working directory or above it, matching the docs. Otherwise the pointer goes in the repo's `CLAUDE.md`.
+- **Pointer template:** the entry-format bullet asks for one short example entry, not "one example line".
+- **`_Avoid_:`** lists only other words for the same concept, never another entry's term. Overloaded terms have their own row in the ruling table, and re-validate removes any `_Avoid_:` word that is another entry's term.
+- **Re-validate** also rewords `proposed` definitions that use an avoided word.
+- **Stale code** is the one case where an agreed entry is raised again.
+- **Placement** covers entries a ruling creates or renames.
+- **Candidates** must not use a name that the same option moves to `_Avoid_:`.
+- **Existing files:** the "no `**Term**:` entries" stop applies only to an existing `GLOSSARY.md`.

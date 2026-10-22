@@ -32,12 +32,12 @@ If the repo's `GLOSSARY.md` already covers a different domain, ask for a path ra
 
 ## Existing files
 
-- If `GLOSSARY-MAP.md` exists, or `GLOSSARY.md` has no `**Term**:` entries, stop. Ask for a `GLOSSARY.md` path to write to, or cancel.
+- If `GLOSSARY-MAP.md` exists, or an existing `GLOSSARY.md` has no `**Term**:` entries, stop. Ask for a `GLOSSARY.md` path to write to, or cancel.
 - Otherwise, parse the existing file and keep every header and section.
 
 ## Survey
 
-1. **Load precedent.** Read the existing entries. Agreed entries are settled.
+1. **Load precedent.** Read the existing entries. Agreed entries are settled; only a stale code item can raise one again.
 2. **Mine candidates.**
    - Sources: type and class names, enum values, tables, routes, modules, the README, docs, specs, and the conversation.
    - For large repos, run the sweep with the `Explore` agent.
@@ -52,6 +52,7 @@ If the repo's `GLOSSARY.md` already covers a different domain, ask for a path ra
 6. **Re-validate.**
    - Remove relation targets that no longer resolve.
    - Reword any `proposed` definition that uses a word listed under `_Avoid_:` in an agreed entry, including entries agreed in this run.
+   - Remove any `_Avoid_:` word that is another entry's term, and link the two entries with `_See also_:` instead.
 7. **Confirm the clean set last.** Ask one AskUserQuestion covering every surviving entry that is still `proposed`.
    - The question body lists those entries, numbered, as term plus definition.
    - The options are **Accept all as agreed** and **Leave all proposed**.
@@ -63,7 +64,7 @@ If the repo's `GLOSSARY.md` already covers a different domain, ask for a path ra
    - how many concepts were left out;
    - the conflicts that are still open.
 
-Ask only about conflicts. Never ask about a term that has no conflict, and never ask about an agreed entry.
+Ask only about conflicts. Never ask about a term that has no conflict. Never ask about an agreed entry, except as a stale code item.
 
 ## During a session
 
@@ -73,13 +74,18 @@ Follow the pointer rules. When the user explicitly states or approves a term and
 
 The pointer puts the rules in front of every future session, including ones where this skill is not invoked.
 
-- **Target file:** `CLAUDE.md`, unless it is absent or `@`-imports `AGENTS.md`; in those cases use `AGENTS.md`. Claude Code reads `AGENTS.md` when there is no `CLAUDE.md`, and reads only `CLAUDE.md` when both exist. If neither file exists, offer to create `AGENTS.md`. If the glossary is outside any repo, write no pointer and say so.
+- **Target file:**
+  - Claude Code reads `AGENTS.md` only when no `CLAUDE.md`, `.claude/CLAUDE.md`, or `CLAUDE.local.md` exists in the working directory or any directory above it. Otherwise it reads only the `CLAUDE.md` files.
+  - If the repo has a `CLAUDE.md` or `.claude/CLAUDE.md`, use it, unless it `@`-imports `AGENTS.md`; then use `AGENTS.md`.
+  - If none of the three files exists anywhere on that path, use `AGENTS.md`, and offer to create it if it is missing.
+  - If only a `CLAUDE.local.md` or a parent directory's `CLAUDE.md` exists, `AGENTS.md` would not load: offer to create the repo's `CLAUDE.md` instead.
+  - If the glossary is outside any repo, write no pointer and say so.
 - **Detect first:** if the target file, or a file it imports, already mentions the glossary's path, do nothing. If a `## Domain vocabulary` heading already exists, add a path line under it.
 - **Consent:** show the exact text and ask before writing. The pointer changes every future session's context.
 - **Template:** a `## Domain vocabulary` section with one bullet per rule. This is the single home for the inline rules.
   - Glossary path.
   - Use canonical terms.
-  - Never use a word under `_Avoid_:` in an agreed entry.
+  - Never use a word listed under an agreed entry's `_Avoid_:` to mean that entry's concept.
   - Flag a word that is used two ways.
   - Write new terms in the entry format, followed by one short example entry (a `**Term**:` line, a definition, and `_Status_: proposed`), so sessions that never load this skill can copy it.
   - Mark an entry `agreed` only on the user's explicit say-so.
