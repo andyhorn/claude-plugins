@@ -48,6 +48,7 @@ Each conflict category has its own options and its own result. Docket allows 2-4
 - Give at most 4 candidates, or 3 when the question also offers Split.
 - Send further candidates through the built-in "Other".
 - Put each candidate's exact definition in the option's description, not in its label.
+- A candidate's definition must not use any name that the same option moves to `_Avoid_:`.
 
 | Category | Options | What a ruling writes |
 | --- | --- | --- |
