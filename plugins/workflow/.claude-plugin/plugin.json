@@ -1,7 +1,7 @@
 {
   "name": "workflow",
   "version": "0.2.0",
-  "description": "Working-session workflows: walk through review findings or open questions one decision at a time with docket.",
+  "description": "Working-session workflows: triage review findings into necessary, beneficial, defer, and discard, then walk the remaining decisions one at a time with docket.",
   "author": {
     "name": "Andy Horn",
     "email": "andyjhorn@gmail.com"

@@ -22,12 +22,13 @@
     },
     {
       "name": "workflow",
-      "description": "Working-session workflows: walk through review findings or open questions one decision at a time with docket.",
+      "description": "Working-session workflows: triage review findings into necessary, beneficial, defer, and discard, then walk the remaining decisions one at a time with docket.",
       "version": "0.2.0",
       "source": "./plugins/workflow",
       "category": "productivity",
       "tags": [
         "review",
+        "triage",
         "decisions"
       ]
     },

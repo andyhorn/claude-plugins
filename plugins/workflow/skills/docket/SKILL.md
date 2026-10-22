@@ -1,6 +1,6 @@
 ---
 name: docket
-description: Work through a list of decisions (review findings, open questions, lint results) with the user one item or one batch of related items at a time, carrying earlier rulings forward as precedent for later items. Use for /docket, or when the user wants to go through findings or open questions one by one.
+description: Work through a list of decisions (review findings, open questions, lint results) with the user one item or one batch of related items at a time, carrying earlier rulings forward as precedent for later items. Use for /docket, for the handoff section of a triage report, or when the user wants to go through findings or open questions one by one.
 ---
 
 # Docket
@@ -14,12 +14,12 @@ Two mechanisms reduce round-trips, and they are different things:
 
 ## Workflow
 
-1. **Build the full list first.** Gather every item before presenting any of them — read the diff, run the linter, collect the findings, whatever surfaces the full set. Don't discover items mid-loop if the source lets you enumerate up front; a running total ("item 3 of 11") requires knowing 11 in advance.
+1. **Build the full list first.** Gather every item before presenting any of them — read the diff, run the linter, collect the findings, whatever surfaces the full set. Don't discover items mid-loop if the source lets you enumerate up front; a running total ("item 3 of 11") requires knowing 11 in advance. If a triage report exists in scope (`docs/code-review/<slug>/triage.md`), build the list from its `## Handoff` section instead of the raw review — settled verdicts are not items to decide.
 2. **Track state.** Use TodoWrite with one entry per item (or per group), plus a running note of decisions made so far. This is what lets you detect cross-item dependencies in step 4 and produce the closing summary in step 8.
 3. **Group only when both hold:** the items are near-duplicates (same root cause, same file pattern, same finding type) AND the fix/decision is identical across them. Present the group as one question, but list every instance it covers in the body so the user knows what they're deciding for. When in doubt, don't group — a false-group forces one answer onto items that deserved different ones; the fix is presenting one extra question, which is cheap.
 4. **Before presenting an item, check whether an earlier decision already resolves it.** This is common, not an edge case — e.g. "reject all TODO-style comments" resolves every later comment-style finding. When it's fully resolved:
    - Say so explicitly ("per your answer on #2, this one follows the same fix") — don't ask again and don't silently skip. Update the todo for that item to reflect the resolution instead.
-   When it's *partially* constrained (an earlier choice narrows the options but doesn't decide it), adjust the offered options to only the ones still consistent with the earlier choice, and say what was narrowed and why.
+   When it's *partially* constrained (an earlier choice narrows the options but doesn't decide it), adjust the offered options to only the ones still consistent with the earlier choice, and say what was narrowed and why. A confirmed triage verdict is precedent too: never re-ask it, and cite its `T` id when a later item inherits the decision.
 5. **Form batches.** After grouping, cluster the remaining items into batches of 2-4 that are related (same file, same module, same theme, same finding family) so the user stays in one mental context. A batch is valid only if **no question's options or relevance depend on another question's answer in the same batch** — answers arrive together, so you can't narrow later options by earlier ones (step 4 only works across batches). If item B depends on item A, put them in different batches, A first. Items that don't relate to anything else go alone as a single question. When in doubt, don't batch — a batch built on a hidden dependency forces answers made blind.
 6. **Present one batch at a time using AskUserQuestion**, then stop and wait for the response before doing anything else — no queuing up the next batch, no proceeding on an assumed answer. One AskUserQuestion call per turn; put the whole batch in its `questions` array. For each question:
    - `header` (max 12 chars): the tab label — a short identifier for the item (e.g. `#3 auth.dart`), so the user can tell tabs apart at a glance.
