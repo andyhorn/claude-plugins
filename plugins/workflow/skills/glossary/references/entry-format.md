@@ -13,14 +13,14 @@ Receives and tracks customer orders.
 
 **Order**:
 A customer's confirmed request to buy one or more SKUs.
-_Avoid_: purchase, cart (a cart is not yet an Order)
+_Avoid_: purchase
 _Has_: Line Item, Payment
 _Code_: `Order`, `orders` table
 _Status_: agreed
 ````
 
 - **New file:** `# {Context Name}` is the repo, product, or subject name, followed by one sentence of scope.
-- **Placement:** write new entries into the section that holds the existing entries, either `## Language` or one of its `###` subheadings. Insert alphabetically if that section is sorted; otherwise append at the end of the section. This also applies to entries that a ruling creates or renames, such as the two halves of a split. Never re-sort the file and never add headings to an existing file.
+- **Placement:** write new entries into the section that holds the existing entries, either `## Language` or one of its `###` subheadings. Insert alphabetically if most of that section is in alphabetical order; otherwise append at the end of the section. This also applies to entries that a ruling creates or renames, such as the two halves of a split. Never re-sort the file and never add headings to an existing file.
 
 ## Entry lines
 
@@ -53,7 +53,7 @@ Each conflict category has its own options and its own result. Docket allows 2-4
 | Category | Options | What a ruling writes |
 | --- | --- | --- |
 | Synonym, code-prose mismatch | Candidate canonical terms | The chosen term and definition, marked `agreed`. The losing names move to `_Avoid_:`. |
-| Overloaded term | Candidate meanings for the word, plus **Split into two terms** | The chosen meaning keeps the word, marked `agreed`. A split creates two qualified terms as new `proposed` entries, each with the bare word under `_Avoid_:`. The bare word never goes under `_Avoid_:` while another entry uses it as its term. |
+| Overloaded term | Candidate meanings for the word, plus **Split into two terms** | The chosen meaning keeps the word, marked `agreed`. A split replaces the bare-word entry with two qualified terms as new `proposed` entries, each with the bare word under `_Avoid_:`. The bare word never goes under `_Avoid_:` while another entry uses it as its term. |
 | Undefined jargon | Candidate definitions | The chosen definition, marked `agreed` |
 | Stale code | **Update `_Code_`** (only when a successor was found), **Rename the term** (only when a successor was found), **Keep without the missing names**, **Remove the entry** (only when every name is missing) | Update replaces the missing names with the successor. Rename also changes the term and moves the old name to `_Avoid_:`. Keep drops the missing names, and drops `_Code_:` entirely if nothing is left. Remove deletes the entry. The status does not change. |
 
