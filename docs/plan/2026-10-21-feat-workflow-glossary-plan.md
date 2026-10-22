@@ -257,7 +257,7 @@ claude --plugin-dir ./plugins/workflow
 
 ## Changes after the dry run
 
-Three scripted dry runs and one review round changed the shipped skill. Where this plan and the skill disagree, the skill is authoritative.
+Six scripted dry runs and two review rounds changed the shipped skill. Where this plan and the skill disagree, the skill is authoritative.
 
 - **Pointer target:** chosen from committed repo files only: the repo's `CLAUDE.md` (or `AGENTS.md` if it imports it), otherwise `AGENTS.md`. Local files that stop `AGENTS.md` from loading only add a warning to the consent question.
 - **Pointer template:** the entry-format bullet asks for one short example entry, not "one example line".
@@ -267,3 +267,4 @@ Three scripted dry runs and one review round changed the shipped skill. Where th
 - **Placement** covers entries a ruling creates or renames.
 - **Candidates** must not use a name that the same option moves to `_Avoid_:`.
 - **Existing files:** the "no `**Term**:` entries" stop applies only to an existing `GLOSSARY.md`.
+- **Headers:** every question header, docket's included, stays at 12 characters or fewer.

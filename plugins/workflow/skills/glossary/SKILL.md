@@ -64,7 +64,7 @@ If the repo's `GLOSSARY.md` already covers a different domain, ask for a path ra
    - how many concepts were left out;
    - the conflicts that are still open.
 
-Ask only about conflicts. Never ask about a term that has no conflict. Never ask about an agreed entry, except as a stale code item.
+Ask only about conflicts. Never ask about a term that has no conflict. Never ask about an agreed entry, except as a stale code item. Keep every question's header, including docket's, to 12 characters or fewer; abbreviate long terms, for example `#1 Provenanc`.
 
 ## During a session
 
