@@ -49,7 +49,9 @@ If the repo's `GLOSSARY.md` already covers a different domain, ask for a path ra
    - Never prune because a term is absent from the conversation or the docs. Never sweep a non-code glossary.
 4. **Classify conflicts:** synonym, overloaded term, code-prose mismatch, undefined jargon, or stale code. A `proposed` entry can be part of a conflict.
 5. **Rule on conflicts.** Hand the list to `workflow:docket` as an explicit list, one item per conflict, using the options in the ruling table of the entry format. Writing each ruling to `GLOSSARY.md` is docket's apply step, so the file is written after every batch.
-6. **Re-validate.** Remove relation targets that no longer resolve.
+6. **Re-validate.**
+   - Remove relation targets that no longer resolve.
+   - Reword any `proposed` definition that uses a word listed under `_Avoid_:` in an agreed entry, including entries agreed in this run.
 7. **Confirm the clean set last.** Ask one AskUserQuestion covering every surviving entry that is still `proposed`.
    - The question body lists those entries, numbered, as term plus definition.
    - The options are **Accept all as agreed** and **Leave all proposed**.
@@ -71,7 +73,7 @@ Follow the pointer rules. When the user explicitly states or approves a term and
 
 The pointer puts the rules in front of every future session, including ones where this skill is not invoked.
 
-- **Target file:** `CLAUDE.md`, unless it is absent or `@`-imports `AGENTS.md`; in those cases use `AGENTS.md`. Claude Code loads only `CLAUDE.md` when both exist. If neither file exists, offer to create `AGENTS.md`. If the glossary is outside any repo, write no pointer and say so.
+- **Target file:** `CLAUDE.md`, unless it is absent or `@`-imports `AGENTS.md`; in those cases use `AGENTS.md`. Claude Code reads `AGENTS.md` when there is no `CLAUDE.md`, and reads only `CLAUDE.md` when both exist. If neither file exists, offer to create `AGENTS.md`. If the glossary is outside any repo, write no pointer and say so.
 - **Detect first:** if the target file, or a file it imports, already mentions the glossary's path, do nothing. If a `## Domain vocabulary` heading already exists, add a path line under it.
 - **Consent:** show the exact text and ask before writing. The pointer changes every future session's context.
 - **Template:** a `## Domain vocabulary` section with one bullet per rule. This is the single home for the inline rules.
@@ -79,7 +81,7 @@ The pointer puts the rules in front of every future session, including ones wher
   - Use canonical terms.
   - Never use a word under `_Avoid_:` in an agreed entry.
   - Flag a word that is used two ways.
-  - Write new terms in the entry format, with one example line.
+  - Write new terms in the entry format, followed by one short example entry (a `**Term**:` line, a definition, and `_Status_: proposed`), so sessions that never load this skill can copy it.
   - Mark an entry `agreed` only on the user's explicit say-so.
   - Only `agreed` entries are binding.
 

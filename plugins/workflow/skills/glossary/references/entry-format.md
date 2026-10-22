@@ -20,7 +20,7 @@ _Status_: agreed
 ````
 
 - **New file:** `# {Context Name}` is the repo, product, or subject name, followed by one sentence of scope.
-- **Placement:** write new entries into the section that holds the existing entries, either `## Language` or one of its `###` subheadings. Insert alphabetically if that section is sorted; otherwise append at the end of the section. Never re-sort the file and never add headings to an existing file.
+- **Placement:** write new entries into the section that holds the existing entries, either `## Language` or one of its `###` subheadings. Insert alphabetically if that section is sorted; otherwise append at the end of the section. This also applies to entries that a ruling creates or renames, such as the two halves of a split. Never re-sort the file and never add headings to an existing file.
 
 ## Entry lines
 
