@@ -16,7 +16,7 @@ Claude Code plugins by Andy Horn.
 | Plugin | Contents |
 | --- | --- |
 | `git` | `/git:rebase` skill, with the `git:rebase-driver` and `git:rebase-resolver` agents. |
-| `workflow` | `/workflow:docket` skill. |
+| `workflow` | `/workflow:triage` for sorting review findings into verdicts, and `/workflow:docket` for walking the remaining decisions one at a time. |
 | `rigor` | Session-start operating rules, the `rigor:grade-loop` and `rigor:plan-stress-test` skills, and the `rigor:work-reviewer`, `rigor:operator` and `rigor:adversary` agents. |
 
 The `rigor` skills are based on [a video](https://www.tiktok.com/@chasetalks1.0/video/7676275825049652493) by Chase Howard ([@chasetalks1.0](https://www.tiktok.com/@chasetalks1.0) on TikTok).
