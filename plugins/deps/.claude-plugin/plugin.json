@@ -1,6 +1,6 @@
 {
   "name": "deps",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Dependabot PR triage: buckets open dependency PRs by provenance, semver, CI and mergeability, and analyzes release notes against your code. Read-only; never merges.",
   "author": {
     "name": "Andy Horn",
