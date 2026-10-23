@@ -1,6 +1,6 @@
 ---
 name: triage
-description: Use when asked to review dependency PRs, triage the dependabot backlog, check what Dependabot opened, or assess the impact of a dependency bump — triggers on "triage dependabot", "review dependency PRs", "/deps:triage". Read-only: buckets open Dependabot PRs by provenance, semver, CI and mergeability, and analyzes release notes against this codebase. Never merges or approves.
+description: 'Use when asked to review dependency PRs, triage the dependabot backlog, check what Dependabot opened, or assess the impact of a dependency bump — triggers on "triage dependabot", "review dependency PRs", "/deps:triage". Read-only: buckets open Dependabot PRs by provenance, semver, CI and mergeability, and analyzes release notes against this codebase. Never merges or approves.'
 ---
 
 # Triage
