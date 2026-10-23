@@ -22,11 +22,12 @@
     },
     {
       "name": "workflow",
-      "description": "Working-session workflows: triage review findings into necessary, beneficial, defer, and discard, walk the remaining decisions one at a time with docket, and keep a shared domain vocabulary with glossary.",
+      "description": "Working-session workflows: align on a shared understanding before work starts, triage review findings into necessary, beneficial, defer, and discard, then walk the remaining decisions one at a time with docket, and keep a shared domain vocabulary with glossary.",
       "version": "0.2.0",
       "source": "./plugins/workflow",
       "category": "productivity",
       "tags": [
+        "alignment",
         "review",
         "triage",
         "decisions",
