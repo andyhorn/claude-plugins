@@ -257,11 +257,11 @@ claude --plugin-dir ./plugins/workflow
 
 ## Changes after the dry run
 
-Six scripted dry runs and two review rounds changed the shipped skill. Where this plan and the skill disagree, the skill is authoritative.
+Six scripted dry runs and three review rounds changed the shipped skill. Where this plan and the skill disagree, the skill is authoritative.
 
-- **Pointer target:** chosen from committed repo files only: the repo's `CLAUDE.md` (or `AGENTS.md` if it imports it), otherwise `AGENTS.md`. Local files that stop `AGENTS.md` from loading only add a warning to the consent question.
+- **Pointer target:** chosen from committed repo files only: the repo's `CLAUDE.md` (or `AGENTS.md` if it imports it), otherwise `AGENTS.md`. Uncommitted or parent-directory files that stop `AGENTS.md` from loading only add a warning to the consent question.
 - **Pointer template:** the entry-format bullet asks for one short example entry, not "one example line".
-- **`_Avoid_:`** lists only other words for the same concept, never another entry's term. Overloaded terms have their own row in the ruling table, and a split replaces the bare-word entry. Re-validate removes such words from `proposed` entries only. A candidate whose term an agreed entry avoids is a synonym conflict.
+- **`_Avoid_:`** lists only other words for the same concept, never another entry's term. Overloaded terms have their own row in the ruling table, and a split replaces the bare-word entry. Re-validate removes such words from `proposed` entries only. A candidate whose term an agreed entry avoids is not a conflict: it is dropped, or drafted under a qualified term when the sources use the word for a different concept, so the agreed entry is never reopened.
 - **Re-validate** also rewords `proposed` definitions that use an avoided word.
 - **Stale code** is the one case where an agreed entry is raised again.
 - **Placement** covers entries a ruling creates or renames.

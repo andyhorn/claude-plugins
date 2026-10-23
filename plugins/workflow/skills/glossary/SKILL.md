@@ -47,7 +47,7 @@ If the repo's `GLOSSARY.md` already covers a different domain, ask for a path ra
    - Propose a successor only if `git log -S'<name>'` or the nearby code makes one obvious.
    - Each entry with missing names becomes one stale code item.
    - Never prune because a term is absent from the conversation or the docs. Never sweep a non-code glossary.
-4. **Classify conflicts:** synonym, overloaded term, code-prose mismatch, undefined jargon, or stale code. A `proposed` entry can be part of a conflict. A candidate whose term an agreed entry lists under `_Avoid_:` is a synonym conflict with that entry.
+4. **Classify conflicts:** synonym, overloaded term, code-prose mismatch, undefined jargon, or stale code. A `proposed` entry can be part of a conflict. A candidate whose term an agreed entry lists under `_Avoid_:` is not a conflict: that entry already ruled it a synonym, so don't add it. If the sources use the word for a different concept, draft that concept under a qualified term as `proposed`, with the bare word under its `_Avoid_:`.
 5. **Rule on conflicts.** Hand the list to `workflow:docket` as an explicit list, one item per conflict, using the options in the ruling table of the entry format. Writing each ruling to `GLOSSARY.md` is docket's apply step, so the file is written after every batch.
 6. **Re-validate.**
    - Remove relation targets that no longer resolve.
@@ -64,7 +64,7 @@ If the repo's `GLOSSARY.md` already covers a different domain, ask for a path ra
    - how many concepts were left out;
    - the conflicts that are still open.
 
-Ask only about conflicts. Never ask about a term that has no conflict. Never ask about an agreed entry, except as a stale code item. Keep every question's header, including docket's, to 12 characters or fewer; abbreviate long terms, for example `#1 Provenanc`.
+Ask only about conflicts. Never ask about a term that has no conflict, except in the step 7 clean-set question. Never ask about an agreed entry, except as a stale code item. Keep every question's header, including docket's, to 12 characters or fewer; abbreviate long terms, for example `#1 Provenanc`.
 
 ## During a session
 
@@ -77,7 +77,7 @@ The pointer puts the rules in front of every future session, including ones wher
 - **Target file:** choose it from the repo's committed files only.
   - If the repo has a `CLAUDE.md` or `.claude/CLAUDE.md`, use it, unless it `@`-imports `AGENTS.md`; then use `AGENTS.md`.
   - Otherwise use `AGENTS.md`, and offer to create it if it is missing. By default, Claude Code reads `AGENTS.md` when there is no `CLAUDE.md`.
-  - That default also gives way to a `CLAUDE.local.md`, or to a `CLAUDE.md` or `.claude/CLAUDE.md` in a parent directory. `~/.claude/CLAUDE.md` and managed instructions don't count, and the Project instructions setting can change the default. If such a local file exists, say in the consent question that `AGENTS.md` may not load on this machine. Don't change the target.
+  - That default also gives way to a `CLAUDE.local.md`, to a repo-root `CLAUDE.md` or `.claude/CLAUDE.md` that is untracked or gitignored, or to a `CLAUDE.md` or `.claude/CLAUDE.md` in a parent directory. `~/.claude/CLAUDE.md` and managed instructions don't count, and the Project instructions setting can change the default. If such a file exists, say in the consent question that `AGENTS.md` may not load on this machine. Don't change the target.
   - If the glossary is outside any repo, write no pointer and say so.
 - **Detect first:** if the target file, or a file it imports, already mentions the glossary's path, do nothing. If a `## Domain vocabulary` heading already exists, add a path line under it.
 - **Consent:** show the exact text and ask before writing. The pointer changes every future session's context.
