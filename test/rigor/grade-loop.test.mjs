@@ -3,6 +3,10 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
+const rules = readFileSync(
+  new URL('../../plugins/rigor/rules.md', import.meta.url),
+  'utf8',
+);
 const skill = readFileSync(
   new URL('../../plugins/rigor/skills/grade-loop/SKILL.md', import.meta.url),
   'utf8',
@@ -22,9 +26,10 @@ describe('work-reviewer agent format', () => {
     assert.match(reviewer, /^\s*- \[ADVISORY\]/m);
   });
 
-  it('cap MUST-FIX at the 3 highest-impact [BLOCKING] deductions', () => {
-    assert.match(reviewer, /MUST-FIX.*at most 3/i);
-    assert.match(reviewer, /3 highest-impact \[BLOCKING\] deductions/i);
+  it('caps MUST-FIX at the mode\'s [MUST-FIX] cap from rules.md', () => {
+    assert.match(reviewer, /mode's \[MUST-FIX\] cap/i);
+    assert.match(reviewer, /at most.*highest-impact \[BLOCKING\] deductions/i);
+    assert.doesNotMatch(reviewer, /at most 3 highest-impact \[BLOCKING\] deductions/);
     assert.match(reviewer, /MUST-FIX.*never contains.*\[ADVISORY\]/i);
   });
 
@@ -54,15 +59,19 @@ describe('work-reviewer review journal', () => {
 
 describe('grade-loop skill stop conditions', () => {
   it('passes only when the acceptance gate is PASS', () => {
-    assert.match(skill, /acceptance gate \*\*PASS\*\*.*score 85 or more/i);
+    assert.match(skill, /acceptance gate \*\*PASS\*\*.*mode's pass threshold/i);
   });
 
-  it('passes at 85 or more with no [BLOCKING] deductions', () => {
-    assert.match(skill, /score 85 or more.*no \[BLOCKING\] deductions remain.*MUST-FIX list is empty/i);
+  it('passes with no [BLOCKING] deductions at the mode\'s pass threshold', () => {
+    assert.match(
+      skill,
+      /total score at or above the mode's pass threshold.*no \[BLOCKING\] deductions remain.*MUST-FIX list is empty/i,
+    );
   });
 
-  it('does not anchor the pass on a 90 threshold', () => {
-    assert.doesNotMatch(skill, /score 90 or more with an empty MUST-FIX/);
+  it('does not anchor the pass on a fixed 85 or 90 threshold', () => {
+    assert.doesNotMatch(skill, /score (85|90) or more with an empty MUST-FIX/);
+    assert.doesNotMatch(skill, /score (85|90) or more.*no \[BLOCKING\] deductions/);
   });
 
   it('stops early on progress when the score rose and only advisory/uncertain items remain', () => {
@@ -173,5 +182,39 @@ describe('grade-loop packet format', () => {
   it('requires severity tags', () => {
     assert.match(skill, /severity tags/i);
     assert.match(skill, /\[BLOCKING\] or \[ADVISORY\]/i);
+  });
+});
+
+describe('grade-loop strictness modes', () => {
+  it('defines three modes in rules.md', () => {
+    assert.match(rules, /strictness:<lenient\|balanced\|adversarial>/i);
+    assert.match(rules, /\| lenient    \|/i);
+    assert.match(rules, /\| balanced   \|/i);
+    assert.match(rules, /\| adversarial \|/i);
+  });
+
+  it('maps each mode to its pass threshold and MUST-FIX cap', () => {
+    assert.match(rules, /\|\s*lenient\s*\|.*\|\s*80\s*\|\s*2\s*\|/i);
+    assert.match(rules, /\|\s*balanced\s*\|.*\|\s*85\s*\|\s*3\s*\|/i);
+    assert.match(rules, /\|\s*adversarial\s*\|.*\|\s*90\s*\|\s*5\s*\|/i);
+  });
+
+  it('requires the strictness mode in the packet from round 1', () => {
+    assert.match(skill, /strictness:<lenient\|balanced\|adversarial>/i);
+    assert.match(skill, /The packet must include all of the following/i);
+  });
+
+  it('defaults the strictness mode to balanced when not specified', () => {
+    assert.match(skill, /If the user did not specify a mode.*use `balanced`/i);
+    assert.match(rules, /`balanced` is the default/i);
+  });
+
+  it('reads thresholds and caps from rules.md instead of hard-coded defaults', () => {
+    assert.match(skill, /Read `plugins\/rigor\/rules\.md`/i);
+    assert.match(skill, /do not assume the old defaults of 85 and 3/i);
+  });
+
+  it('locks the strictness mode after the first round', () => {
+    assert.match(skill, /Once chosen for this deliverable.*do not change the mode between rounds/i);
   });
 });
