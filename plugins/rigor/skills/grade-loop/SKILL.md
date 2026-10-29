@@ -33,7 +33,7 @@ The "Grade deliverables" rule in `rules.md` defines what counts as a deliverable
 
 ## Review journal
 
-Maintain the journal in a file named `.agentastic/review-journal.md` in the project root (or your scratchpad directory if the project has no `.agentastic` folder). Update it after each reviewer round, before the next dispatch. Use this format:
+Maintain the journal in a file named `review-journal.md` in your scratchpad directory. If you are grading multiple deliverables in the same scratchpad, name it `review-journal-<deliverable>.md`. Update it after each reviewer round, before the next dispatch. Use this format:
 
 ```markdown
 # Review journal: <deliverable>
