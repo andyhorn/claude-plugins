@@ -11,6 +11,10 @@ const reviewer = readFileSync(
   new URL('../../plugins/rigor/agents/work-reviewer.md', import.meta.url),
   'utf8',
 );
+const examples = readFileSync(
+  new URL('../../plugins/rigor/agents/work-reviewer/examples.md', import.meta.url),
+  'utf8',
+);
 
 describe('work-reviewer agent format', () => {
   it('tags every deduction as [BLOCKING] or [ADVISORY]', () => {
@@ -25,8 +29,8 @@ describe('work-reviewer agent format', () => {
   });
 
   it('lets only [BLOCKING] deductions prevent a pass', () => {
-    assert.match(reviewer, /Only \[BLOCKING\] deductions can prevent a pass/i);
-    assert.match(reviewer, /Any \[BLOCKING\] deduction: the score is at most 84/i);
+    assert.match(reviewer, /Only \[BLOCKING\] deductions can cause the acceptance gate to fail/i);
+    assert.match(reviewer, /Any \[BLOCKING\] deduction: the acceptance gate FAILS/i);
   });
 });
 
@@ -49,6 +53,10 @@ describe('work-reviewer review journal', () => {
 });
 
 describe('grade-loop skill stop conditions', () => {
+  it('passes only when the acceptance gate is PASS', () => {
+    assert.match(skill, /acceptance gate \*\*PASS\*\*.*score 85 or more/i);
+  });
+
   it('passes at 85 or more with no [BLOCKING] deductions', () => {
     assert.match(skill, /score 85 or more.*no \[BLOCKING\] deductions remain.*MUST-FIX list is empty/i);
   });
@@ -89,5 +97,81 @@ describe('grade-loop escalation', () => {
   it('lets the main agent ask the user about a [BLOCKING] MUST-FIX', () => {
     assert.match(skill, /ask the user whether to dismiss that item/i);
     assert.match(skill, /escalation|escalate/i);
+  });
+});
+
+describe('work-reviewer acceptance gate', () => {
+  it('marks every requirement as MET, PARTIAL, or NOT MET', () => {
+    assert.match(reviewer, /MET \| PARTIAL \| NOT MET/i);
+  });
+
+  it('marks every claim as VERIFIED, REFUTED, or UNCONFIRMED', () => {
+    assert.match(reviewer, /VERIFIED \| REFUTED \| UNCONFIRMED/i);
+  });
+
+  it('requires every requirement MET to pass', () => {
+    assert.match(reviewer, /every requirement.*MET/i);
+    assert.match(reviewer, /Any requirement.*NOT MET.*acceptance gate FAILS/i);
+  });
+
+  it('requires every claim VERIFIED and no REFUTED claims to pass', () => {
+    assert.match(reviewer, /every claim.*VERIFIED/i);
+    assert.match(reviewer, /no REFUTED claims/i);
+  });
+
+  it('fails the acceptance gate for any [BLOCKING] deduction', () => {
+    assert.match(reviewer, /Any \[BLOCKING\] deduction: the acceptance gate FAILS/i);
+  });
+});
+
+describe('work-reviewer correctness / polish split', () => {
+  it('splits correctness into a 0-75 gate', () => {
+    assert.match(reviewer, /Correctness gate \(0-75/i);
+  });
+
+  it('splits polish into a 0-25 score', () => {
+    assert.match(reviewer, /Polish score \(0-25/i);
+  });
+
+  it('tags polish deductions as [ADVISORY] only', () => {
+    assert.match(reviewer, /Polish deductions are always \[ADVISORY\]/i);
+    assert.match(reviewer, /no polish item is ever \[BLOCKING\]/i);
+  });
+
+  it('lets polish lower the total but not block a pass by itself', () => {
+    assert.match(reviewer, /no polish item is ever \[BLOCKING\]/i);
+  });
+});
+
+describe('work-reviewer calibration examples', () => {
+  it('has a non-empty examples file', () => {
+    assert.ok(examples.length > 0);
+  });
+
+  it('includes calibration cases', () => {
+    assert.match(examples, /Case 1:/i);
+    assert.match(examples, /Case 2:/i);
+    assert.match(examples, /Case 3:/i);
+  });
+
+  it('anchors scoring with PASS/FAIL acceptance gates', () => {
+    assert.match(examples, /Acceptance gate: PASS/i);
+    assert.match(examples, /Acceptance gate: FAIL/i);
+  });
+
+  it('is referenced by the reviewer prompt', () => {
+    assert.match(reviewer, /examples\.md/i);
+  });
+});
+
+describe('grade-loop packet format', () => {
+  it('requires an acceptance checklist in the packet', () => {
+    assert.match(skill, /An \*\*acceptance checklist\*\*/i);
+    assert.match(skill, /acceptance checklist.*required in the packet/i);
+  });
+
+  it('requires severity tags', () => {
+    assert.match(skill, /severity tags/i);
+    assert.match(skill, /\[BLOCKING\] or \[ADVISORY\]/i);
   });
 });

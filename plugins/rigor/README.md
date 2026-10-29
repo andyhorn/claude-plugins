@@ -7,14 +7,14 @@ Credit: these rules are based on [a video](https://www.tiktok.com/@chasetalks1.0
 ## What it does
 
 - **Session-start rules.** A `SessionStart` hook prints `rules.md` into the session's context. The rules say: verify claims or mark them unconfirmed, check fresh facts instead of trusting memory, push back on the user's claims and plans, grade deliverables, and stress-test plans.
-- **`rigor:grade-loop` skill.** Runs the verify command, then dispatches the `rigor:work-reviewer` agent to score a deliverable 0-100. A score under 90, or any must-fix item, means rework. The loop stops after 3 rounds and reports the open deductions.
+- **`rigor:grade-loop` skill.** Runs the verify command, then dispatches the `rigor:work-reviewer` agent to run an acceptance checklist first: every explicit requirement must be MET, every claim must be VERIFIED, there must be no REFUTED claims, and there must be no [BLOCKING] deductions. If the gate passes, the reviewer scores correctness out of 75 and polish out of 25 for a combined 0-100 total. The passing threshold is 85 without any [BLOCKING] items. The loop stops after 3 rounds and reports the open deductions.
 - **`rigor:plan-stress-test` skill.** Dispatches the `rigor:operator` agent (the user's finite time, energy, interest and money) and the `rigor:adversary` agent (tries to make the plan fail) in parallel, then merges both into the plan.
 
 ## What it does not do
 
 The rules are instructions. Nothing in the harness forces the model to follow them. The hook only makes sure they are in context, and they are loaded again after `/clear` and compaction.
 
-The `rigor:work-reviewer` agent has no Edit, Write or Bash tool, and Claude Code enforces the tool list, so the reviewer cannot change files or run commands. You run the project's verify command and pass the exact command, exit status and full output in the review packet. The reviewer can check that output against the files, but it cannot re-run it, so it marks a claim from partial or missing output as unconfirmed.
+The `rigor:work-reviewer` agent has no Edit, Write or Bash tool, and Claude Code enforces the tool list, so the reviewer cannot change files or run commands. You run the project's verify command and pass the exact command, exit status and full output in the review packet. The reviewer uses it to verify claims, mark explicit requirements MET or NOT MET, and gate acceptance before it scores.
 
 ## Scope defaults
 
