@@ -26,7 +26,7 @@ The "Grade deliverables" rule in `rules.md` defines what counts as a deliverable
 1. Make the deliverable durable first: write the file or make the change. The reviewer reads the real artifact, not your description of it.
 2. Build the review packet. Create a file in a scratchpad directory (use `/tmp` only if there is none, but prefer a project scratchpad). The packet must include all of the following, so large diffs and logs stay out of the dispatch prompt:
    - The original task text, quoted from the user.
-   - The strictness mode: `strictness:<lenient|balanced|adversarial>`. Read `plugins/rigor/rules.md` for the current thresholds and caps. If the user did not specify a mode, use `balanced`. Once chosen for this deliverable, do not change the mode between rounds.
+   - The strictness mode: `strictness:<lenient|balanced|adversarial>`. Read `plugins/rigor/rules.md` for the current thresholds and caps. If the user did not specify a mode, look for `RIGOR_STRICTNESS` in the environment or a simple user rule (e.g., "grade strictly" or "grade leniently") and map it. If none of those are present, use `balanced`. Once chosen for this deliverable, do not change the mode between rounds.
    - The exact file paths of the deliverable.
    - An **acceptance checklist**: the explicit requirements you derived from the task, as a numbered list. Be specific; the reviewer will mark each one MET, PARTIAL, or NOT MET.
    - Your claims, as a numbered list. Include every statement of the form "this works", "this passes", or "this is current".
@@ -42,7 +42,7 @@ The "Grade deliverables" rule in `rules.md` defines what counts as a deliverable
    - **Progress stop:** the score rose since the previous round, no [BLOCKING] deductions remain, and only [ADVISORY] or `UNCONFIRMED` items are left: stop. Report the score, the remaining advisory items, and the improvement to the user. UNCONFIRMED items should still go back to the user as open questions.
    - **Rework:** acceptance gate **FAIL**, total score below the mode's pass threshold, any [BLOCKING] item remains, or MUST-FIX is non-empty: rework every [BLOCKING] MUST-FIX item. Do not skip one because you disagree. If you think an item is wrong, check it against a primary source and say so in the next packet.
 5. After every rework, repeat from step 2: re-run the verify command and rebuild the packet with the new acceptance checklist, the new verify output, the new git state, the prior must-fix items, and the updated review journal.
-6. Cap: use the mode's MUST-FIX cap from `plugins/rigor/rules.md`. If the final round does not meet a stop condition in step 4, stop. Show the user the score, the open [BLOCKING] and [ADVISORY] deductions, and what you tried. Do not start another round without the user's go-ahead.
+6. Round cap: 3 rounds. If round 3 does not meet a stop condition in step 4, stop. Show the user the score, the open [BLOCKING] and [ADVISORY] deductions, and what you tried. Do not start a fourth round without the user's go-ahead. Each round's MUST-FIX list is capped at the mode's [MUST-FIX] cap from `plugins/rigor/rules.md`.
 
 ## Review journal
 

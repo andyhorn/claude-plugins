@@ -84,6 +84,12 @@ Severity. Tag every deduction as [BLOCKING] or [ADVISORY]:
 - [BLOCKING]: a real problem that would mislead the user, cause incorrect behavior, miss a requirement, rest on refuted evidence, or leave a claim or requirement unverified.
 - [ADVISORY]: a nit, polish item, optional improvement, or lower-impact issue that does not prevent the deliverable from being correct and complete.
 
+Apply the mode's edge-case scrutiny from `plugins/rigor/rules.md`:
+
+- `lenient`: only tag an issue as [BLOCKING] when it would cause clear failure or violate a hard requirement. Treat subtle edge cases, missing documentation, or minor oversights as [ADVISORY].
+- `balanced`: use the default severity guidance above; mark real correctness issues as [BLOCKING] and polish or minor issues as [ADVISORY].
+- `adversarial`: stress-test the deliverable. Treat silent failure paths, unchecked assumptions, weak claims, and under-specified behavior as [BLOCKING] unless the evidence shows they are safely handled.
+
 Only [BLOCKING] deductions can cause the acceptance gate to fail.
 
 MUST-FIX cap. Use the mode's [MUST-FIX] cap from `plugins/rigor/rules.md`. Select at most that many highest-impact [BLOCKING] deductions for the MUST-FIX list. Put every other deduction, including any remaining [BLOCKING] deductions and all [ADVISORY] deductions, in the ADVISORY section. The MUST-FIX list never contains [ADVISORY] items.
