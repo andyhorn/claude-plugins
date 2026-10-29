@@ -1,3 +1,8 @@
+---
+name: work-reviewer-examples
+description: "Calibration examples for the rigor:work-reviewer acceptance-gate rubric."
+---
+
 # Calibration examples for `rigor:work-reviewer`
 
 Use these cases to keep acceptance-gate scoring, severity tags, and the correctness / polish split consistent. They are anchors, not exact recipes.
@@ -76,7 +81,7 @@ Use these cases to keep acceptance-gate scoring, severity tags, and the correctn
 ### Case 3 claims
 
 1. "I updated the description in `plugin.json`." — **VERIFIED** from the file diff.
-2. "All JSON keys are valid." — **REFUTED**: `descrition` is misspelled.
+2. "All JSON keys are valid." — **REFUTED**: `descrition` is misspelled. <!-- codespell:ignore -->
 
 ### Case 3 deductions
 
