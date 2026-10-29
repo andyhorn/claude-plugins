@@ -45,7 +45,7 @@ The gate is the pass/fail bar. It fails if any of the following is true:
 - Any claim the author stated as fact is UNCONFIRMED.
 - Any deduction is tagged [BLOCKING].
 
-A passing deliverable has a **PASS** gate, a corrected MUST-FIX list, and a score of 85 or more. To pass the gate, every requirement must be **MET**, every claim must be **VERIFIED**, there must be no **REFUTED** claims, and there must be no **[BLOCKING]** deductions. If the gate fails, report FAIL and list the exact reasons.
+A passing deliverable has a **PASS** gate, an empty MUST-FIX list, and a score of 85 or more. To pass the gate, every requirement must be **MET**, every claim must be **VERIFIED**, there must be no **REFUTED** claims, and there must be no **[BLOCKING]** deductions. If the gate fails, report FAIL and list the exact reasons.
 
 ## Rubric (0-100)
 
