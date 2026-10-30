@@ -1,11 +1,21 @@
 ---
 name: grade-loop
-description: Use before declaring any deliverable done (a file you wrote or changed, a written plan, or a document). Dispatches the rigor:work-reviewer agent to score the work 0-100, tags deductions as [BLOCKING] or [ADVISORY], reworks every [BLOCKING] MUST-FIX item, and repeats until the score is 85 or more with no [BLOCKING] deductions remaining, until a progress stop condition is met, or until the round cap is reached. Not for chat replies, routine commands, or one-line lookups.
+description: >
+  Use before declaring any deliverable done (a file you wrote or changed, a written
+  plan, or a document). Dispatches the rigor:work-reviewer agent to run an
+  acceptance gate first: every explicit requirement must be MET, every author claim
+  must be VERIFIED, there must be no REFUTED claims, and there must be no
+  [BLOCKING] deductions. If the gate passes, the reviewer scores correctness out
+  of 75 and polish out of 25 for a combined 0-100 total. Rework every
+  [BLOCKING] MUST-FIX item, and repeat until the acceptance gate passes, the
+  total is 85 or more with no [BLOCKING] deductions remaining, until a progress
+  stop condition is met, or until the round cap is reached. Not for chat replies,
+  routine commands, or one-line lookups.
 ---
 
 # Grade Loop
 
-A deliverable is not done until `rigor:work-reviewer` scores it 85 or more, no [BLOCKING] deductions remain, and the MUST-FIX list is empty. You never grade your own work, and you never argue a score down without new primary-source evidence.
+A deliverable is not done until `rigor:work-reviewer` reports an **acceptance gate PASS**, a score of 85 or more, no [BLOCKING] deductions remaining, and an empty MUST-FIX list. You never grade your own work, and you never argue a score down without new primary-source evidence.
 
 ## When it applies
 
@@ -14,21 +24,23 @@ The "Grade deliverables" rule in `rules.md` defines what counts as a deliverable
 ## Procedure
 
 1. Make the deliverable durable first: write the file or make the change. The reviewer reads the real artifact, not your description of it.
-2. Build the review packet as a file in your scratchpad directory (use `/tmp` only if there is none). Put the full text of every item below in that file, so large diffs and logs stay out of the dispatch prompt:
+2. Build the review packet. Create a file in a scratchpad directory (use `/tmp` only if there is none, but prefer a project scratchpad). The packet must include all of the following, so large diffs and logs stay out of the dispatch prompt:
    - The original task text, quoted from the user.
-   - The exact file paths.
+   - The exact file paths of the deliverable.
+   - An **acceptance checklist**: the explicit requirements you derived from the task, as a numbered list. Be specific; the reviewer will mark each one MET, PARTIAL, or NOT MET.
    - Your claims, as a numbered list. Include every statement of the form "this works", "this passes", or "this is current".
    - For code or config, the verify output: run the project's verify command first, either yourself or through a test-runner agent if you have one, and paste the exact command, its exit status, and its full unedited output. The reviewer cannot run commands. Run it again after every rework, before the next dispatch.
+   - The required severity tags: every deduction in the reviewer's output must be tagged [BLOCKING] or [ADVISORY]. You do not add them; you verify that the reviewer does.
    - For a deliverable inside a git repo, the git state: run `git status --short --untracked-files=all` yourself and paste the output unedited. `git diff` omits untracked files, so the status output must list each one by file path. For uncommitted work, also paste `git diff HEAD --stat` and `git diff HEAD`. For committed work, name the base branch and paste `git log <base>..HEAD --oneline`, `git diff <base>...HEAD --stat` and `git diff <base>...HEAD`. Use both sets when some work is committed and some is not.
    - Never include prior scores or the round number. They anchor the reviewer. Score each round blind.
    - From round 2 on, add a **Prior must-fix items** list: the earlier [BLOCKING] MUST-FIX items, worded as the reviewer wrote them. The reviewer checks each one and reports it apart from the score. The score covers the whole deliverable, not only that list.
    - From round 2 on, add a **Review journal** section: copy the current contents of the review journal file. If there is no journal file yet, start one. The reviewer uses it to avoid re-reporting items that have already been fixed or dismissed.
 3. Dispatch the `rigor:work-reviewer` agent with the path to the packet file. Tell it which worktree it is in: the main worktree, a shared worktree, or its own isolated worktree. Use a fresh dispatch each round. Do not reuse context.
 4. Read the result.
-   - **Pass:** score 85 or more **and** no [BLOCKING] deductions remain **and** the MUST-FIX list is empty: stop. Report the score and the CHECKED list to the user.
+   - **Pass:** acceptance gate **PASS**, score 85 or more, no [BLOCKING] deductions remain, and the MUST-FIX list is empty: stop. Report the correctness, polish, total, and the CHECKED list to the user.
    - **Progress stop:** the score rose since the previous round, no [BLOCKING] deductions remain, and only [ADVISORY] or `UNCONFIRMED` items are left: stop. Report the score, the remaining advisory items, and the improvement to the user. UNCONFIRMED items should still go back to the user as open questions.
-   - **Rework:** score under 85, **or** any [BLOCKING] item remains, **or** MUST-FIX is non-empty: rework every [BLOCKING] MUST-FIX item. Do not skip one because you disagree. If you think an item is wrong, check it against a primary source and say so in the next packet.
-5. After every rework, repeat from step 2: re-run the verify command and rebuild the packet with the new verify output, the new git state, the prior must-fix items, and the updated review journal.
+   - **Rework:** acceptance gate **FAIL**, score under 85, any [BLOCKING] item remains, or MUST-FIX is non-empty: rework every [BLOCKING] MUST-FIX item. Do not skip one because you disagree. If you think an item is wrong, check it against a primary source and say so in the next packet.
+5. After every rework, repeat from step 2: re-run the verify command and rebuild the packet with the new acceptance checklist, the new verify output, the new git state, the prior must-fix items, and the updated review journal.
 6. Cap: 3 rounds. If round 3 does not meet a stop condition in step 4, stop. Show the user the score, the open [BLOCKING] and [ADVISORY] deductions, and what you tried. Do not start a fourth round without the user's go-ahead.
 
 ## Review journal
@@ -59,7 +71,7 @@ If a [BLOCKING] MUST-FIX item would require large rework, is low-impact, or conf
 
 ## Report to the user
 
-State the round count, each round's score, and what changed between rounds. Quote the reviewer's score line exactly. Do not paraphrase a score upward. List any [BLOCKING] or [ADVISORY] items that are still open when you stop.
+State the round count, each round's score (correctness, polish, total, acceptance gate), and what changed between rounds. Quote the reviewer's score line exactly. Do not paraphrase a score upward. List any [BLOCKING] or [ADVISORY] items that are still open when you stop.
 
 ## Rules
 
@@ -68,3 +80,4 @@ State the round count, each round's score, and what changed between rounds. Quot
 - The reviewer is read-only and cannot run commands. You make all fixes and you run all checks.
 - A fixed or dismissed deduction from the review journal must not be re-reported by the reviewer in a later round unless it regressed.
 - MUST-FIX never contains more than 3 [BLOCKING] items; anything else is advisory.
+- The acceptance checklist is required in the packet from round 1 onward.
