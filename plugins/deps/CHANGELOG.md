@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/andyhorn/claude-plugins/compare/deps-v0.2.0...deps-v0.2.1) (2026-10-30)
+
+
+### Bug Fixes
+
+* **deps:** quote triage description so frontmatter parses ([#32](https://github.com/andyhorn/claude-plugins/issues/32)) ([2545a50](https://github.com/andyhorn/claude-plugins/commit/2545a50bce72184a0d51465d7bb6cf91611b3acf))
+
 ## [0.2.0](https://github.com/andyhorn/claude-plugins/compare/deps-v0.1.0...deps-v0.2.0) (2026-10-19)
 
 

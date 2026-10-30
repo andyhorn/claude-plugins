@@ -1,6 +1,6 @@
 {
   "plugins/git": "0.1.0",
-  "plugins/workflow": "0.2.0",
-  "plugins/deps": "0.2.0",
-  "plugins/rigor": "0.2.0"
+  "plugins/workflow": "0.3.0",
+  "plugins/deps": "0.2.1",
+  "plugins/rigor": "0.3.0"
 }
