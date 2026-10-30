@@ -7,7 +7,7 @@ Credit: these rules are based on [a video](https://www.tiktok.com/@chasetalks1.0
 ## What it does
 
 - **Session-start rules.** A `SessionStart` hook prints `rules.md` into the session's context. The rules say: verify claims or mark them unconfirmed, check fresh facts instead of trusting memory, push back on the user's claims and plans, grade deliverables, and stress-test plans.
-- **`rigor:grade-loop` skill.** Runs the verify command, then dispatches the `rigor:work-reviewer` agent to run an acceptance checklist first: every explicit requirement must be MET, every claim must be VERIFIED, there must be no REFUTED claims, and there must be no [BLOCKING] deductions. If the gate passes, the reviewer scores correctness out of 75 and polish out of 25 for a combined 0-100 total. The passing threshold is 85 without any [BLOCKING] items. The loop stops after 3 rounds and reports the open deductions.
+- **`rigor:grade-loop` skill.** Runs the verify command, then dispatches the `rigor:work-reviewer` agent to run an acceptance checklist first: every explicit requirement must be MET, every claim must be VERIFIED, there must be no REFUTED claims, and there must be no [BLOCKING] deductions. If the gate passes, the reviewer scores correctness out of 75 and polish out of 25 for a combined 0-100 total. The passing score and MUST-FIX cap depend on the chosen strictness mode. The loop stops when the acceptance gate passes, progress conditions are met, or the round cap is reached, and reports the open deductions.
 - **`rigor:plan-stress-test` skill.** Dispatches the `rigor:operator` agent (the user's finite time, energy, interest and money) and the `rigor:adversary` agent (tries to make the plan fail) in parallel, then merges both into the plan.
 
 ## What it does not do
@@ -15,6 +15,16 @@ Credit: these rules are based on [a video](https://www.tiktok.com/@chasetalks1.0
 The rules are instructions. Nothing in the harness forces the model to follow them. The hook only makes sure they are in context, and they are loaded again after `/clear` and compaction.
 
 The `rigor:work-reviewer` agent has no Edit, Write or Bash tool, and Claude Code enforces the tool list, so the reviewer cannot change files or run commands. You run the project's verify command and pass the exact command, exit status and full output in the review packet. The reviewer uses it to verify claims, mark explicit requirements MET or NOT MET, and gate acceptance before it scores.
+
+## Grade-loop strictness modes
+
+Pass a strictness mode when invoking `rigor:grade-loop`. Include `strictness:<lenient|balanced|adversarial>` in the packet; `balanced` is the default. The reviewer uses the mode's pass threshold and caps the MUST-FIX list at the mode's cap while applying the matching edge-case scrutiny.
+
+| mode        | pass threshold | MUST-FIX cap | edge-case scrutiny |
+|-------------|---------------:|-------------:|-------------------:|
+| lenient     | 80             | 2            | low (obvious cases) |
+| balanced    | 85             | 3            | medium |
+| adversarial | 90             | 5            | high (stress test) |
 
 ## Scope defaults
 

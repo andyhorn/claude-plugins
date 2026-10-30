@@ -1,6 +1,6 @@
 {
   "name": "rigor",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Session discipline: verify claims, push back, stress-test plans with operator and adversary personas, and grade deliverables behind an acceptance gate with a reviewer agent.",
   "author": {
     "name": "Andy Horn",
