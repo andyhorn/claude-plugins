@@ -1,6 +1,6 @@
 {
   "name": "workflow",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Working-session workflows: align on a shared understanding before work starts, triage review findings into necessary, beneficial, defer, and discard, then walk the remaining decisions one at a time with docket, and keep a shared domain vocabulary with glossary.",
   "author": {
     "name": "Andy Horn",
