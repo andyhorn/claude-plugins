@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/andyhorn/claude-plugins/compare/rigor-v0.3.0...rigor-v0.4.0) (2026-11-09)
+
+
+### Features
+
+* **rigor:** raise grade-loop round cap from 3 to 5 ([#38](https://github.com/andyhorn/claude-plugins/issues/38)) ([0363743](https://github.com/andyhorn/claude-plugins/commit/036374330c09cbab77b09d8915761514612781f0))
+
 ## [0.3.0](https://github.com/andyhorn/claude-plugins/compare/rigor-v0.2.0...rigor-v0.3.0) (2026-10-30)
 
 
