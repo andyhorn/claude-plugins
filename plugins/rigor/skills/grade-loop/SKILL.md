@@ -42,7 +42,7 @@ The "Grade deliverables" rule in `rules.md` defines what counts as a deliverable
    - **Progress stop:** the score rose since the previous round, no [BLOCKING] deductions remain, and only [ADVISORY] or `UNCONFIRMED` items are left: stop. Report the score, the remaining advisory items, and the improvement to the user. UNCONFIRMED items should still go back to the user as open questions.
    - **Rework:** acceptance gate **FAIL**, total score below the mode's pass threshold, any [BLOCKING] item remains, or MUST-FIX is non-empty: rework every [BLOCKING] MUST-FIX item. Do not skip one because you disagree. If you think an item is wrong, check it against a primary source and say so in the next packet.
 5. After every rework, repeat from step 2: re-run the verify command and rebuild the packet with the new acceptance checklist, the new verify output, the new git state, the prior must-fix items, and the updated review journal.
-6. Round cap: 3 rounds. If round 3 does not meet a stop condition in step 4, stop. Show the user the score, the open [BLOCKING] and [ADVISORY] deductions, and what you tried. Do not start a fourth round without the user's go-ahead. Each round's MUST-FIX list is capped at the mode's [MUST-FIX] cap from `plugins/rigor/rules.md`.
+6. Round cap: 5 rounds. If round 5 does not meet a stop condition in step 4, stop. Show the user the score, the open [BLOCKING] and [ADVISORY] deductions, and what you tried. Do not start a sixth round without the user's go-ahead. Each round's MUST-FIX list is capped at the mode's [MUST-FIX] cap from `plugins/rigor/rules.md`.
 
 ## Review journal
 
