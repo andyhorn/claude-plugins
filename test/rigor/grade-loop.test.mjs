@@ -214,6 +214,11 @@ describe('grade-loop strictness modes', () => {
     assert.match(skill, /do not assume the old defaults of 85 and 3/i);
   });
 
+  it('caps the loop at five rounds', () => {
+    assert.match(skill, /Round cap: 5 rounds\. If round 5 does not meet a stop condition/i);
+    assert.match(skill, /Do not start a sixth round without the user's go-ahead/i);
+  });
+
   it('locks the strictness mode after the first round', () => {
     assert.match(skill, /Once chosen for this deliverable.*do not change the mode between rounds/i);
   });
